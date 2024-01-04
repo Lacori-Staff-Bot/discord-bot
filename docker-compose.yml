@@ -1,0 +1,13 @@
+version: "3"
+services:
+  app:
+    build: .
+    command: node build/main.js
+    environment:
+      - BOT_TOKEN=${BOT_TOKEN}
+      - MYSQL_HOST=${MYSQL_HOST}
+      - MYSQL_PORT=${MYSQL_PORT}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - API_PORT=${API_PORT}
