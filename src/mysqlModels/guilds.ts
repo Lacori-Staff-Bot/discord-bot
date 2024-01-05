@@ -1,11 +1,12 @@
-import databaseController from "./main.js"
+import databaseController from "./main.js";
 
 interface Guild {
     id: string,
     valid: boolean,
     genderRole: boolean,
     maleRole: string | null,
-    femaleRole: string | null
+    femaleRole: string | null,
+    audit: string | null
 }
 
 interface UpdateGuild {
@@ -13,6 +14,7 @@ interface UpdateGuild {
     genderRole?: boolean,
     maleRole?: string | null,
     femaleRole?: string | null,
+    audit?: string | null
 }
 
 class Guilds {
