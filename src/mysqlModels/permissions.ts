@@ -35,6 +35,21 @@ class Permissions {
         }
     }
 
+    async getPermissions(guildId: string) {
+        const getPermission = await databaseController.getRequest("SELECT * FROM `permissions` WHERE guildId = ?", [guildId]) as Permission[];
+
+        if (!getPermission.length) {
+            return {
+                status: false
+            };
+        } else {
+            return {
+                status: true,
+                getPermission
+            };
+        }
+    }
+
     async removePermission(id: string, guildId: string) {
         const removePermission = await databaseController.updateRequest("DELETE FROM `permissions` WHERE id = ? AND guildId = ?", [id, guildId]);
 
