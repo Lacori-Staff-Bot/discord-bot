@@ -114,3 +114,48 @@ export function banUnban(type: "BanSuccess" | "BanErrorMod" | "BanErrorActive" |
             }).setColor("Blurple");
     }
 }
+
+export function MuteUnmute(type: "MuteSuccess" | "MuteErrorMod" | "MuteAudit" | "MuteInfo" | "UnmuteSuccess" | "UnmuteErrorMod" | "UnmuteAudit" | "UnmuteInfo", target?: string, reasone?: string, time?: number, author?: string, guildName?: string) {
+    switch (type) {
+        case "MuteSuccess":
+            return new EmbedBuilder({
+                title: "Успешно",
+                description: `Пользователь <@${target}> был отстранён до <t:${time}>.\nПричина: ${reasone}.`
+            }).setColor("Green");
+        case "MuteErrorMod":
+            return new EmbedBuilder({
+                title: "Ошибка",
+                description: `Невозможно отстранить <@${target}>, пользователь имеет имунитет.`
+            }).setColor("Red");
+        case "MuteAudit":
+            return new EmbedBuilder({
+                title: "Мут",
+                description: `Пользователь <@${target}> был отстранён до <t:${time}>.\nПричина: ${reasone}\nВыдал: <@${author}>`
+            }).setColor("Orange");
+        case "MuteInfo":
+            return new EmbedBuilder({
+                title: `Отстранён - ${guildName}`,
+                description: `Вы были отстранены до <t:${time}> по причине: ${reasone}.\nАвтор: <@${author}>`
+            }).setColor("Blurple");
+        case "UnmuteSuccess":
+            return new EmbedBuilder({
+                title: "Успешно",
+                description: `Отстранение было снято с <@${target}>`
+            }).setColor("Green");
+        case "UnmuteErrorMod":
+            return new EmbedBuilder({
+                title: "Ошибка",
+                description: `Пользователь <@${target}> не может быть отстранён и не нуждается в снятии наказания`
+            }).setColor("Red");
+        case "UnmuteAudit":
+            return new EmbedBuilder({
+                title: "Размут",
+                description: `Пользователь <@${target}> был восстановлен в праве общения <@${author}>`
+            }).setColor("Orange");
+        case "UnmuteInfo":
+            return new EmbedBuilder({
+                title: `Восстановлен - ${guildName}`,
+                description: `Пользователь <@${author}> снял с вас ограничение на общение`
+            }).setColor("Blurple");
+    }
+}

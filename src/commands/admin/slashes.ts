@@ -1,7 +1,7 @@
 import { ApplicationCommandOptionType, Role, type CommandInteraction, ChannelType, GuildTextBasedChannel } from "discord.js";
 import { Discord, Slash, SlashGroup, SlashOption } from "discordx";
-import guildsModel from "../../mysqlModels/guilds.js";
 import { auditSystem, genderSystem, grPermission, restrictSystem } from "../../builders/embeds/admin.js";
+import guildsModel from "../../mysqlModels/guilds.js";
 import restrictionsModel from "../../mysqlModels/restrictions.js";
 import permissionsModel from "../../mysqlModels/permissions.js";
 
