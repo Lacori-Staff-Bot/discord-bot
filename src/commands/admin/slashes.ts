@@ -1,6 +1,6 @@
 import { ApplicationCommandOptionType, Role, type CommandInteraction, ChannelType, GuildTextBasedChannel } from "discord.js";
 import { Discord, Slash, SlashGroup, SlashOption } from "discordx";
-import { auditSystem, genderSystem, grPermission, restrictSystem } from "../../builders/embeds/admin.js";
+import { auditSystem, genderSystem, grPermission, predsSet, restrictSystem } from "../../builders/embeds/admin.js";
 import guildsModel from "../../mysqlModels/guilds.js";
 import restrictionsModel from "../../mysqlModels/restrictions.js";
 import permissionsModel from "../../mysqlModels/permissions.js";
@@ -429,6 +429,60 @@ export class Admin {
         embeds: [grPermission("ClearSuccess")],
         ephemeral: true
       });
+    }
+  }
+
+  @Slash({ description: "Установить канал предупреждений" })
+  async preds(
+    @SlashOption({
+      name: "channel",
+      description: "Канал",
+      required: false,
+      type: ApplicationCommandOptionType.Channel,
+      channelTypes: [ChannelType.GuildText]
+    })
+    preds: GuildTextBasedChannel,
+    interaction: CommandInteraction
+  ) {
+    const getGuild = await guildsModel.getGuild(interaction.guildId!);
+
+    if (preds) {
+      if (getGuild.guild!.preds == null) {
+        await guildsModel.updateGuild(interaction.guildId!, { preds: preds.id });
+
+        await interaction.reply({
+          embeds: [predsSet("SetSuccess", preds.id)],
+          ephemeral: true
+        });
+      } else {
+        if (getGuild.guild!.preds != preds.id) {
+          await guildsModel.updateGuild(interaction.guildId!, { preds: preds.id });
+
+          await interaction.reply({
+            embeds: [predsSet("ChangeSuccess", preds.id)],
+            ephemeral: true
+          });
+        } else {
+          await interaction.reply({
+            embeds: [predsSet("ChangeErrorAlready", preds.id)],
+            ephemeral: true
+          });
+        }
+      }
+    } else {
+      if (getGuild.guild!.preds != null) {
+        await guildsModel.updateGuild(interaction.guildId!, { preds: null });
+
+        await interaction.reply({
+          embeds: [predsSet("RemoveSuccess")],
+          ephemeral: true
+        });
+      } else {
+        await interaction.reply({
+          embeds: [predsSet("RemoveErrorExist")],
+          ephemeral: true
+        });
+      }
     }
   }
 }

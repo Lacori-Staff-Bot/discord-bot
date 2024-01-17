@@ -6,7 +6,8 @@ interface Guild {
     genderRole: boolean,
     maleRole: string | null,
     femaleRole: string | null,
-    audit: string | null
+    audit: string | null,
+    preds: string | null
 }
 
 interface UpdateGuild {
@@ -14,7 +15,8 @@ interface UpdateGuild {
     genderRole?: boolean,
     maleRole?: string | null,
     femaleRole?: string | null,
-    audit?: string | null
+    audit?: string | null,
+    preds?: string | null
 }
 
 class Guilds {

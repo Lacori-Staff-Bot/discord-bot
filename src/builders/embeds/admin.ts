@@ -139,3 +139,33 @@ export function grPermission(type: "GrandSuccess" | "GrandErrorExist" | "GrandEr
             }).setColor("Red");
     }
 }
+
+export function predsSet(type: "SetSuccess" | "ChangeSuccess" | "ChangeErrorAlready" | "RemoveSuccess" | "RemoveErrorExist", channel?: string) {
+    switch (type) {
+        case "SetSuccess":
+            return new EmbedBuilder({
+                title: `Успешно`,
+                description: `Канал <#${channel}> установлен для записей о предупреждениях`
+            }).setColor("Green");
+        case "ChangeSuccess":
+            return new EmbedBuilder({
+                title: `Успешно`,
+                description: `Канал для записей о предупреждениях изменён на <#${channel}>`
+            }).setColor("Green");
+        case "ChangeErrorAlready":
+            return new EmbedBuilder({
+                title: `Ошибка`,
+                description: `Канал <#${channel}> уже установлен для записей о предупреждениях`
+            }).setColor("Red");
+        case "RemoveSuccess":
+            return new EmbedBuilder({
+                title: `Успешно`,
+                description: `Канал для записей о предупреждениях сброшен`
+            }).setColor("Green");
+        case "RemoveErrorExist":
+            return new EmbedBuilder({
+                title: `Ошибка`,
+                description: `Канал для записей о предупреждениях не существует`
+            }).setColor("Red");
+    }
+}

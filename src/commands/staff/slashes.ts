@@ -1,6 +1,6 @@
 import { ApplicationCommandOptionType, CommandInteraction, GuildMember, GuildTextBasedChannel } from "discord.js";
 import { Discord, Slash, SlashChoice, SlashGroup, SlashOption } from "discordx";
-import { MuteUnmute, activeBlock, banUnban, genderRole, warnUnwarn } from "../../builders/embeds/staff.js";
+import { MuteUnmute, activeBlock, banUnban, genderRole, givePred, warnUnwarn } from "../../builders/embeds/staff.js";
 import { restrictions } from "../../subsystems/restrictions.js";
 import { audit } from "../../subsystems/audit.js";
 import bansModel from "../../mysqlModels/bans.js";
@@ -356,6 +356,7 @@ export class Staff {
                 } else {
                     const addWarn = await warnsModel.addWarn(interaction.guildId!, member.id, interaction.user.id, reasone);
                     const addBan = await bansModel.addBan(interaction.user.id, member.id, interaction.guildId!, "Warn");
+                    await restrictions("warn", interaction, interaction.guildId!, interaction.member as GuildMember);
                     await member.timeout(25 * 60 * 60 * 1000, "Max warns");
 
                     await interaction.reply({
@@ -364,6 +365,7 @@ export class Staff {
                     });
                     await audit("warn", interaction, member.id, reasone, undefined, addWarn.id!);
                     await audit("warnban", interaction, member.id, undefined, undefined, addBan.id!);
+                    await restrictions("warn", interaction, interaction.guildId!, interaction.member as GuildMember);
                     await member.send({
                         embeds: [
                             warnUnwarn("WarnInfo", undefined, reasone, interaction.user.id, interaction.guild!.name),
@@ -380,6 +382,66 @@ export class Staff {
         } else {
             await interaction.reply({
                 embeds: [warnUnwarn("WarnErrorMod", member.id)],
+                ephemeral: true
+            });
+        }
+    }
+
+    @Slash({ description: "Выдать предупреждение" })
+    async pred(
+        @SlashOption({
+            name: "member",
+            description: "Пользователь",
+            required: true,
+            type: ApplicationCommandOptionType.User
+        })
+        member: GuildMember,
+        @SlashOption({
+            name: "reasone",
+            description: "Причина",
+            required: true,
+            type: ApplicationCommandOptionType.String
+        })
+        reasone: string,
+        interaction: CommandInteraction
+    ) {
+        const getBlockedTarget = await blocksModel.getBlockedTarget(interaction.user.id, interaction.guildId!);
+
+        if (!getBlockedTarget.status || getBlockedTarget.block!.status == 0) {
+            const getGuild = await guildsModel.getGuild(interaction.guildId!);
+
+            if (getGuild.guild!.preds != null) {
+                const preds = await interaction.guild!.channels.fetch(getGuild.guild!.preds) as GuildTextBasedChannel | null;
+
+                if (preds != null) {
+                    await restrictions("pred", interaction, interaction.guildId!, interaction.member as GuildMember);
+                    await interaction.reply({
+                        embeds: [givePred("Success", member.id)],
+                        ephemeral: true
+                    });
+                    await preds.send({
+                        embeds: [givePred("Pred", member.id, interaction.user.id, reasone)]
+                    });
+                    await member.send({
+                        embeds: [givePred("Info", undefined, interaction.user.id, reasone, interaction.guild!.name)]
+                    });
+                } else {
+                    await interaction.reply({
+                        embeds: [givePred("Error")],
+                        ephemeral: true
+                    });
+
+                    await guildsModel.updateGuild(interaction.guildId!, { preds: null });
+                }
+            } else {
+                await interaction.reply({
+                    embeds: [givePred("Error")],
+                    ephemeral: true
+                });
+            }
+        } else {
+            await interaction.reply({
+                embeds: [activeBlock("Error")],
                 ephemeral: true
             });
         }

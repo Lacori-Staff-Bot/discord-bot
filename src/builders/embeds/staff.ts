@@ -209,3 +209,28 @@ export function warnUnwarn(type: "WarnSuccess" | "WarnErrorMod" | "WarnInfo" | "
             })
     }
 }
+
+export function givePred(type: "Success" | "Pred" | "Info" | "Error", target?: string, author?: string, reasone?: string, guildName?: string) {
+    switch (type) {
+        case "Success":
+            return new EmbedBuilder({
+                title: `Успешно`,
+                description: `Пользователю <@${target}> было выдано предупреждение`
+            }).setColor("Green");
+        case "Pred":
+            return new EmbedBuilder({
+                title: `Предупреждение`,
+                description: `Пользователь <@${author}> выдал <@${target}> предупреждение по причине: ${reasone}`
+            }).setColor("Blurple");
+        case "Info":
+            return new EmbedBuilder({
+                title: `Предупреждение - ${guildName}`,
+                description: `Пользователь <@${author}> выдал вам предупреждение по причине: ${reasone}`
+            }).setColor("Blurple");
+        case "Error":
+            return new EmbedBuilder({
+                title: `Ошибка`,
+                description: `Система предупреждений не настроена`
+            }).setColor("Red");
+    }
+}
