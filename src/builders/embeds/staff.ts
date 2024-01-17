@@ -159,3 +159,53 @@ export function MuteUnmute(type: "MuteSuccess" | "MuteErrorMod" | "MuteAudit" | 
             }).setColor("Blurple");
     }
 }
+
+export function warnUnwarn(type: "WarnSuccess" | "WarnErrorMod" | "WarnInfo" | "WarnAudit" | "UnwarnSuccess" | "UnwarnErrorExist" | "UnwarnInfo" | "WarnBan" | "WarnBanAudit", target?: string, reason?: string, author?: string, guildName?: string) {
+    switch (type) {
+        case "WarnSuccess":
+            return new EmbedBuilder({
+                title: `Успешно`,
+                description: `Пользователю <@${target}> был выдан варн`
+            }).setColor("Green");
+        case "WarnErrorMod":
+            return new EmbedBuilder({
+                title: `Ошибка`,
+                description: `Невозможно выдать варн пользователю <@${target}>, пользователь имеет имунитет`
+            }).setColor("Red");
+        case "WarnInfo":
+            return new EmbedBuilder({
+                title: `Варн - ${guildName}`,
+                description: `Вам был видан варн <@${author}>\nПричина: ${reason}`
+            }).setColor("Blurple");
+        case "WarnAudit":
+            return new EmbedBuilder({
+                title: `Варн`,
+                description: `Пользователь <@${author}> выдал варн <@${target}> по причине: ${reason}`
+            }).setColor("Orange");
+        case "UnwarnSuccess":
+            return new EmbedBuilder({
+                title: `Успешно`,
+                description: `Варн был снят`
+            }).setColor("Green");
+        case "UnwarnErrorExist":
+            return new EmbedBuilder({
+                title: `Ошибка`,
+                description: `Данный варн не активен`
+            }).setColor("Red");
+        case "UnwarnInfo":
+            return new EmbedBuilder({
+                title: `Снятие варна - ${guildName}`,
+                description: `Пользователь <@${author}> снял у вас активный варн`
+            }).setColor("Blurple");
+        case "WarnBan":
+            return new EmbedBuilder({
+                title: `Забанен - ${guildName}`,
+                description: "Вы были забанены системой за получение 3 варнов в течении недели"
+            }).setColor("Blurple");
+        case "WarnBanAudit":
+            return new EmbedBuilder({
+                title: `Бан`,
+                description: `Пользователь <@${target}> был забанен системой за получение 3 варнов в течении недели`
+            })
+    }
+}

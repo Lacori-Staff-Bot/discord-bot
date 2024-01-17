@@ -1,6 +1,7 @@
 import { bot } from "../main.js";
 import bansModel from "../mysqlModels/bans.js";
 import blocksModel from "../mysqlModels/blocks.js";
+import warnsModel from "../mysqlModels/warns.js";
 
 export async function checkBans() {
     const getActiveBans = await bansModel.getActiveBans();
@@ -29,6 +30,19 @@ export async function checkBlocks() {
         for (const block of getTreckBlocks.blocks!) {
             if (date > block.data) {
                 await blocksModel.removeBlock(block.id);
+            }
+        }
+    }
+}
+
+export async function checkWarns() {
+    const getActiveWarns = await warnsModel.getActiveWarns();
+
+    if (getActiveWarns.status) {
+        const date = Date.now();
+        for (const warn of getActiveWarns.warns!) {
+            if (date > warn.data) {
+                await warnsModel.removeWarn(warn.id);
             }
         }
     }

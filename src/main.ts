@@ -3,7 +3,7 @@ import type { Interaction, Message } from "discord.js";
 import { IntentsBitField } from "discord.js";
 import { Client } from "discordx";
 import app from "./api/main.js";
-import { checkBans, checkBlocks } from "./subsystems/checkers.js";
+import { checkBans, checkBlocks, checkWarns } from "./subsystems/checkers.js";
 
 export const bot = new Client({
   intents: [
@@ -27,6 +27,7 @@ bot.once("ready", async () => {
 
   setInterval(checkBans, 60 * 60 * 1000);
   setInterval(checkBlocks, 60 * 1000);
+  setInterval(checkWarns, 60 * 60 * 1000);
 
   console.log("Bot started");
 });

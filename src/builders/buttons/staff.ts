@@ -18,6 +18,15 @@ export function unmute(id: string, guildId: string) {
     return new ActionRowBuilder<ButtonBuilder>({ components: [button] });
 }
 
+export function unwarn(id: number, guildId: string) {
+    const button = new ButtonBuilder({
+        label: "Снять",
+        customId: `unwarn_${id}_${guildId}`,
+        style: ButtonStyle.Primary
+    });
+    return new ActionRowBuilder<ButtonBuilder>({ components: [button] });
+}
+
 export function unblock(id: number) {
     const button = new ButtonBuilder({
         label: "Разблокировать",

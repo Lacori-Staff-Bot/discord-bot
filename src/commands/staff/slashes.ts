@@ -1,11 +1,12 @@
 import { ApplicationCommandOptionType, CommandInteraction, GuildMember, GuildTextBasedChannel } from "discord.js";
 import { Discord, Slash, SlashChoice, SlashGroup, SlashOption } from "discordx";
-import { MuteUnmute, activeBlock, banUnban, genderRole } from "../../builders/embeds/staff.js";
+import { MuteUnmute, activeBlock, banUnban, genderRole, warnUnwarn } from "../../builders/embeds/staff.js";
 import { restrictions } from "../../subsystems/restrictions.js";
 import { audit } from "../../subsystems/audit.js";
 import bansModel from "../../mysqlModels/bans.js";
 import guildsModel from "../../mysqlModels/guilds.js";
 import blocksModel from "../../mysqlModels/blocks.js";
+import warnsModel from "../../mysqlModels/warns.js";
 
 @Discord()
 @SlashGroup({
@@ -254,7 +255,7 @@ export class Staff {
 
             if (!getBlockedTarget.status || getBlockedTarget.block!.status == 0) {
                 await member.timeout(time, reason);
-                const date = Math.trunc((Date.now()+time)/1000);
+                const date = Math.trunc((Date.now() + time) / 1000);
                 await interaction.reply({
                     embeds: [MuteUnmute("MuteSuccess", member.id, reason, date)],
                     ephemeral: true
@@ -312,6 +313,73 @@ export class Staff {
         } else {
             await interaction.reply({
                 embeds: [MuteUnmute("UnmuteErrorMod", member.id)],
+                ephemeral: true
+            });
+        }
+    }
+
+    @Slash({ description: "Выдать варн" })
+    async warn(
+        @SlashOption({
+            name: "member",
+            description: "Пользователь",
+            required: true,
+            type: ApplicationCommandOptionType.User
+        })
+        member: GuildMember,
+        @SlashOption({
+            name: "reasone",
+            description: "Причина",
+            required: true,
+            type: ApplicationCommandOptionType.String
+        })
+        reasone: string,
+        interaction: CommandInteraction
+    ) {
+        if (member.moderatable) {
+            const getBlockedTarget = await blocksModel.getBlockedTarget(interaction.user.id, interaction.guildId!);
+
+            if (!getBlockedTarget.status || getBlockedTarget.block!.status == 0) {
+                const getTargetWarns = await warnsModel.getTargetWarns(interaction.guildId!, member.id);
+
+                if (!getTargetWarns.status || getTargetWarns.warns!.length == 1) {
+                    const addWarn = await warnsModel.addWarn(interaction.guildId!, member.id, interaction.user.id, reasone);
+
+                    await interaction.reply({
+                        embeds: [warnUnwarn("WarnSuccess", member.id, reasone)],
+                        ephemeral: true
+                    });
+                    await audit("warn", interaction, member.id, reasone, undefined, addWarn.id!);
+                    await member.send({
+                        embeds: [warnUnwarn("WarnInfo", undefined, reasone, interaction.user.id, interaction.guild!.name)]
+                    });
+                } else {
+                    const addWarn = await warnsModel.addWarn(interaction.guildId!, member.id, interaction.user.id, reasone);
+                    const addBan = await bansModel.addBan(interaction.user.id, member.id, interaction.guildId!, "Warn");
+                    await member.timeout(25 * 60 * 60 * 1000, "Max warns");
+
+                    await interaction.reply({
+                        embeds: [warnUnwarn("WarnSuccess", member.id, reasone)],
+                        ephemeral: true
+                    });
+                    await audit("warn", interaction, member.id, reasone, undefined, addWarn.id!);
+                    await audit("warnban", interaction, member.id, undefined, undefined, addBan.id!);
+                    await member.send({
+                        embeds: [
+                            warnUnwarn("WarnInfo", undefined, reasone, interaction.user.id, interaction.guild!.name),
+                            warnUnwarn("WarnBan", undefined, undefined, undefined, interaction.guild!.name)
+                        ]
+                    });
+                }
+            } else {
+                await interaction.reply({
+                    embeds: [activeBlock("Error")],
+                    ephemeral: true
+                });
+            }
+        } else {
+            await interaction.reply({
+                embeds: [warnUnwarn("WarnErrorMod", member.id)],
                 ephemeral: true
             });
         }

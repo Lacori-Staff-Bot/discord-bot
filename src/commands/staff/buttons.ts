@@ -1,9 +1,10 @@
 import { ButtonInteraction, Guild, GuildMember, User } from "discord.js";
 import { ButtonComponent, Discord } from "discordx";
 import { bot } from "../../main.js";
-import { MuteUnmute, activeBlock, banUnban } from "../../builders/embeds/staff.js";
+import { MuteUnmute, activeBlock, banUnban, warnUnwarn } from "../../builders/embeds/staff.js";
 import bansModel from "../../mysqlModels/bans.js";
 import blocksModel from "../../mysqlModels/blocks.js";
+import warnsModel from "../../mysqlModels/warns.js";
 
 @Discord()
 export class Staff {
@@ -96,18 +97,16 @@ export class Staff {
     @ButtonComponent({ id: /unmute_/ })
     async unmute(interaction: ButtonInteraction) {
         const id = interaction.customId.split("_")[1];
-        const guildId = interaction.customId.split("_")[2];
         if (interaction.inGuild()) {
             const getBlockedTarget = await blocksModel.getBlockedTarget(interaction.user.id, interaction.guildId!);
 
             if (!getBlockedTarget.status || getBlockedTarget.block!.status == 0) {
-                const guild = await bot.guilds.resolve(guildId) as Guild;
-                const member = await guild.members.resolve(id) as GuildMember | null;
+                const member = await interaction.guild!.members.resolve(id) as GuildMember | null;
                 const target = await bot.users.fetch(id) as User;
                 if (member != null) member.timeout(null, "unmute");
 
                 await target.send({
-                    embeds: [MuteUnmute("UnmuteInfo", undefined, undefined, undefined, interaction.user.id, guild.id)]
+                    embeds: [MuteUnmute("UnmuteInfo", undefined, undefined, undefined, interaction.user.id, interaction.guild!.name)]
                 });
 
                 await interaction.update({
@@ -121,6 +120,7 @@ export class Staff {
                 });
             }
         } else {
+            const guildId = interaction.customId.split("_")[2];
             const guild = await bot.guilds.resolve(guildId) as Guild;
             const member = await guild.members.resolve(id) as GuildMember | null;
             const target = await bot.users.fetch(id) as User;
@@ -134,6 +134,54 @@ export class Staff {
                 embeds: [MuteUnmute("UnmuteSuccess", id)],
                 components: []
             });
+        }
+    }
+
+    @ButtonComponent({ id: /unwarn_/ })
+    async unwarn(interaction: ButtonInteraction) {
+        const id = interaction.customId.split("_")[1];
+        if (interaction.inGuild()) {
+            const getWarnById = await warnsModel.getWarnById(parseInt(id));
+
+            if (getWarnById.warn!.status == 0) {
+                const member = await bot.users.resolve(getWarnById.warn!.targetId);
+                await warnsModel.removeWarn(parseInt(id));
+
+                await interaction.update({
+                    embeds: [warnUnwarn("UnwarnSuccess")],
+                    components: []
+                });
+                if (member != null) await member.send({
+                    embeds: [warnUnwarn("UnwarnInfo", undefined, undefined, interaction.user.id, interaction.guild!.name)]
+                });
+            } else {
+                await interaction.update({
+                    embeds: [warnUnwarn("UnwarnErrorExist")],
+                    components: []
+                });
+            }
+        } else {
+            const getWarnById = await warnsModel.getWarnById(parseInt(id));
+
+            if (getWarnById.warn!.status == 0) {
+                const guildId = interaction.customId.split("_")[2];
+                const guild = await bot.guilds.resolve(guildId);
+                const member = await bot.users.resolve(getWarnById.warn!.targetId);
+                await warnsModel.removeWarn(parseInt(id));
+
+                await interaction.update({
+                    embeds: [warnUnwarn("UnwarnSuccess")],
+                    components: []
+                });
+                if (member != null) await member.send({
+                    embeds: [warnUnwarn("UnwarnInfo", undefined, undefined, interaction.user.id, guild!.name)]
+                });
+            } else {
+                await interaction.update({
+                    embeds: [warnUnwarn("UnwarnErrorExist")],
+                    components: []
+                });
+            }
         }
     }
 }
