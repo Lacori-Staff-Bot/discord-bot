@@ -3,7 +3,7 @@ import bansModel from "../mysqlModels/bans.js";
 import blocksModel from "../mysqlModels/blocks.js";
 import warnsModel from "../mysqlModels/warns.js";
 
-export async function checkBans() {
+async function checkBans() {
     const getActiveBans = await bansModel.getActiveBans();
 
     if (getActiveBans.status) {
@@ -12,8 +12,8 @@ export async function checkBans() {
             if (date > ban.data) {
                 const member = await (await bot.guilds.fetch(ban.guildId)).members.fetch(ban.target)
                 if (member.moderatable) {
-                    member.ban({ reason: ban.reason });
-                    await bansModel.updateBan(ban.id, { status: 1 });
+                    member.ban({ reason: ban.reasone });
+                    await bansModel.makeBaned(ban.id);
                 } else {
                     await bansModel.removeBan(ban.id);
                 }
@@ -22,7 +22,7 @@ export async function checkBans() {
     }
 }
 
-export async function checkBlocks() {
+async function checkBlocks() {
     const getTreckBlocks = await blocksModel.getTreckBlocks();
 
     if (getTreckBlocks.status) {
@@ -35,7 +35,7 @@ export async function checkBlocks() {
     }
 }
 
-export async function checkWarns() {
+async function checkWarns() {
     const getActiveWarns = await warnsModel.getActiveWarns();
 
     if (getActiveWarns.status) {
@@ -46,4 +46,10 @@ export async function checkWarns() {
             }
         }
     }
+}
+
+export function enableCheckers() {
+    setInterval(checkBans, 60 * 60 * 1000);
+    setInterval(checkBlocks, 60 * 1000);
+    setInterval(checkWarns, 60 * 60 * 1000);
 }

@@ -1,113 +1,109 @@
 import { CommandInteraction, GuildTextBasedChannel } from "discord.js";
-import { unban, unmute, unwarn } from "../builders/buttons/staff.js";
-import { MuteUnmute, banUnban, warnUnwarn } from "../builders/embeds/staff.js";
+import { BANS_EMBED_TYPE, MUTES_EMBED_TYPE, WARNS_EMBED_TYPE } from "../builders/embeds/staff.js";
+import { staffBuilders } from "../builders/index.js";
 import guildsModel from "../mysqlModels/guilds.js";
 
-export async function audit(type: "ban" | "unban" | "mute" | "unmute" | "warn" | "warnban", interaction: CommandInteraction, target: string, reason?: string, time?: number, id?: number) {
-    switch (type) {
-        case "ban": {
-            const getGuild = await guildsModel.getGuild(interaction.guildId!);
-            if (getGuild.status && getGuild.guild!.audit) {
+export enum AUDIT_TYPE {
+    BAN,
+    UNBAN,
+    MUTE,
+    UNMUTE,
+    WARN,
+    WARNBAN
+}
+
+export async function audit(type: AUDIT_TYPE, interaction: CommandInteraction, replacements: { target: string, reasone?: string, time?: number, id?: number }) {
+    const { target = "undefined", reasone = "undefined", time = 0, id = 0 } = replacements;
+    const getGuild = await guildsModel.getGuild(interaction.guildId!);
+
+    if (getGuild.guild!.audit) {
+        switch (type) {
+            case AUDIT_TYPE.BAN: {
                 const audit = await interaction.guild!.channels.resolve(getGuild.guild!.audit) as GuildTextBasedChannel | null;
                 if (audit != null) {
                     await audit.send({
-                        embeds: [banUnban("BanAudit", target, reason, interaction.user.id)],
-                        components: [unban(id!)]
+                        embeds: [staffBuilders.embeds.banSystem(BANS_EMBED_TYPE.BAN_AUDIT, { author: interaction.user.id, target, reasone })],
+                        components: [staffBuilders.buttons.unban(id)]
                     });
                 } else {
                     await (await interaction.guild!.fetchOwner()).send({
-                        embeds: [banUnban("BanAudit", target, reason, interaction.user.id)],
-                        components: [unban(id!)]
+                        embeds: [staffBuilders.embeds.banSystem(BANS_EMBED_TYPE.BAN_AUDIT, { author: interaction.user.id, target, reasone })],
+                        components: [staffBuilders.buttons.unban(id)]
                     });
                 }
+                break;
             }
-            break;
-        }
-        case "unban": {
-            const getGuild = await guildsModel.getGuild(interaction.guildId!);
-            if (getGuild.status && getGuild.guild!.audit) {
+            case AUDIT_TYPE.UNBAN: {
                 const audit = await interaction.guild!.channels.resolve(getGuild.guild!.audit) as GuildTextBasedChannel | null;
                 if (audit != null) {
                     await audit.send({
-                        embeds: [banUnban("UnbanAudit", target, undefined, interaction.user.id)]
+                        embeds: [staffBuilders.embeds.banSystem(BANS_EMBED_TYPE.UNBAN_AUDIT, { author: interaction.user.id, target })]
                     });
                 } else {
                     await (await interaction.guild!.fetchOwner()).send({
-                        embeds: [banUnban("UnbanAudit", target, undefined, interaction.user.id)]
+                        embeds: [staffBuilders.embeds.banSystem(BANS_EMBED_TYPE.UNBAN_AUDIT, { author: interaction.user.id, target })]
                     });
                 }
+                break;
             }
-            break;
-        }
-        case "mute": {
-            const getGuild = await guildsModel.getGuild(interaction.guildId!);
-            if (getGuild.status && getGuild.guild!.audit) {
+            case AUDIT_TYPE.MUTE: {
                 const audit = await interaction.guild!.channels.resolve(getGuild.guild!.audit) as GuildTextBasedChannel | null;
                 if (audit != null) {
                     await audit.send({
-                        embeds: [MuteUnmute("MuteAudit", target, reason, time, interaction.user.id)],
-                        components: [unmute(target, interaction.guildId!)]
+                        embeds: [staffBuilders.embeds.muteSystem(MUTES_EMBED_TYPE.MUTE_AUDIT, { author: interaction.user.id, target, time, reasone })],
+                        components: [staffBuilders.buttons.unmute(target, interaction.guildId!)]
                     });
                 } else {
                     await (await interaction.guild!.fetchOwner()).send({
-                        embeds: [MuteUnmute("MuteAudit", target, reason, time, interaction.user.id)],
-                        components: [unmute(target, interaction.guildId!)]
+                        embeds: [staffBuilders.embeds.muteSystem(MUTES_EMBED_TYPE.MUTE_AUDIT, { author: interaction.user.id, target, time, reasone })],
+                        components: [staffBuilders.buttons.unmute(target, interaction.guildId!)]
                     });
                 }
+                break;
             }
-            break;
-        }
-        case "unmute": {
-            const getGuild = await guildsModel.getGuild(interaction.guildId!);
-            if (getGuild.status && getGuild.guild!.audit) {
+            case AUDIT_TYPE.UNMUTE: {
                 const audit = await interaction.guild!.channels.resolve(getGuild.guild!.audit) as GuildTextBasedChannel | null;
                 if (audit != null) {
                     await audit.send({
-                        embeds: [MuteUnmute("UnmuteAudit", target, undefined, undefined, interaction.user.id)]
+                        embeds: [staffBuilders.embeds.muteSystem(MUTES_EMBED_TYPE.UNMUTE_AUDIT, { author: interaction.user.id, target })]
                     });
                 } else {
                     await (await interaction.guild!.fetchOwner()).send({
-                        embeds: [MuteUnmute("UnmuteAudit", target, undefined, undefined, interaction.user.id)]
+                        embeds: [staffBuilders.embeds.muteSystem(MUTES_EMBED_TYPE.UNMUTE_AUDIT, { author: interaction.user.id, target })]
                     });
                 }
+                break;
             }
-            break;
-        }
-        case "warn": {
-            const getGuild = await guildsModel.getGuild(interaction.guildId!);
-            if (getGuild.status && getGuild.guild!.audit) {
+            case AUDIT_TYPE.WARN: {
                 const audit = await interaction.guild!.channels.resolve(getGuild.guild!.audit) as GuildTextBasedChannel | null;
                 if (audit != null) {
                     await audit.send({
-                        embeds: [warnUnwarn("WarnAudit", target, reason, interaction.user.id)],
-                        components: [unwarn(id!, interaction.guildId!)]
+                        embeds: [staffBuilders.embeds.warnSystem(WARNS_EMBED_TYPE.WARN_AUDIT, { author: interaction.user.id, target, reasone })],
+                        components: [staffBuilders.buttons.unwarn(id, interaction.guildId!)]
                     });
                 } else {
                     await (await interaction.guild!.fetchOwner()).send({
-                        embeds: [warnUnwarn("WarnAudit", target, reason, interaction.user.id)],
-                        components: [unwarn(id!, interaction.guildId!)]
+                        embeds: [staffBuilders.embeds.warnSystem(WARNS_EMBED_TYPE.WARN_AUDIT, { author: interaction.user.id, target, reasone })],
+                        components: [staffBuilders.buttons.unwarn(id, interaction.guildId!)]
                     });
                 }
+                break;
             }
-            break;
-        }
-        case "warnban": {
-            const getGuild = await guildsModel.getGuild(interaction.guildId!);
-            if (getGuild.status && getGuild.guild!.audit) {
+            case AUDIT_TYPE.WARNBAN: {
                 const audit = await interaction.guild!.channels.resolve(getGuild.guild!.audit) as GuildTextBasedChannel | null;
                 if (audit != null) {
                     await audit.send({
-                        embeds: [warnUnwarn("WarnBanAudit", target)],
-                        components: [unban(id!)]
+                        embeds: [staffBuilders.embeds.warnSystem(WARNS_EMBED_TYPE.UNWARN_AUDIT, { author: interaction.user.id, target })],
+                        components: [staffBuilders.buttons.unban(id)]
                     });
                 } else {
                     await (await interaction.guild!.fetchOwner()).send({
-                        embeds: [warnUnwarn("WarnBanAudit", target)],
-                        components: [unban(id!)]
+                        embeds: [staffBuilders.embeds.warnSystem(WARNS_EMBED_TYPE.UNWARN_AUDIT, { author: interaction.user.id, target })],
+                        components: [staffBuilders.buttons.unban(id)]
                     });
                 }
+                break;
             }
-            break;
         }
     }
 }

@@ -1,13 +1,13 @@
 import { Pool, createPool, ResultSetHeader, RowDataPacket } from "mysql2/promise";
 
 class Mysql {
-    pool: Pool;
+    private pool: Pool;
 
     constructor(options: { host: string, port: number, user: string, password: string, database: string }) {
         this.pool = createPool(options);
     }
 
-    async getRequest(sql: string, data: (string | number | boolean)[]) {
+    public async getRequest(sql: string, data: (string | number | boolean)[]) {
         try {
             const result = await this.pool.query(sql, data) as RowDataPacket[];
             return result[0];
@@ -16,7 +16,7 @@ class Mysql {
         }
     }
 
-    async updateRequest(sql: string, data: (string | number | boolean | object)[]) {
+    public async updateRequest(sql: string, data: (string | number | boolean | object)[]) {
         try {
             const result = await this.pool.query(sql, data) as ResultSetHeader[];
             return result[0];

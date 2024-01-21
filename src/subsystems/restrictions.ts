@@ -1,287 +1,145 @@
 import { CommandInteraction, GuildMember, GuildTextBasedChannel } from "discord.js";
-import { unblock } from "../builders/buttons/staff.js";
-import { activeBlock } from "../builders/embeds/staff.js";
+import { BLOCK_SYSTEM_EMBED_TYPE } from "../builders/embeds/staff.js";
+import { staffBuilders } from "../builders/index.js";
 import blocksModel from "../mysqlModels/blocks.js";
 import permissionsModel from "../mysqlModels/permissions.js";
 import restrictionsModel from "../mysqlModels/restrictions.js";
 
-export async function restrictions(type: "ban" | "mute" | "warn" | "pred", interaction: CommandInteraction, guildId: string, author: GuildMember) {
-    async function signal(signalId: string, id: number) {
+export enum RESTRICTION_TYPE {
+    BAN,
+    MUTE,
+    WARN,
+    PRED
+}
+
+class Restrictions {
+    private async signal(interaction: CommandInteraction, signalId: string, id: number, target: string) {
         const signalChannel = await interaction.guild!.channels.resolve(signalId) as GuildTextBasedChannel | null;;
         if (signalChannel != null) {
             await signalChannel.send({
-                embeds: [activeBlock("Signal", author.id)],
-                components: [unblock(id)]
+                embeds: [staffBuilders.embeds.blockSystem(BLOCK_SYSTEM_EMBED_TYPE.BLOCKED_SIGNAL, { target })],
+                components: [staffBuilders.buttons.unblock(id)]
             });
         } else {
             (await interaction.guild!.fetchOwner()).send({
-                embeds: [activeBlock("Signal", author.id)],
-                components: [unblock(id)]
+                embeds: [staffBuilders.embeds.blockSystem(BLOCK_SYSTEM_EMBED_TYPE.BLOCKED_SIGNAL, { target })],
+                components: [staffBuilders.buttons.unblock(id)]
             });
         }
     }
-    const getRestriction = await restrictionsModel.getRestriction(guildId);
 
+    public async restrictions(type: RESTRICTION_TYPE, interaction: CommandInteraction, guildId: string, target: GuildMember) {
+        const getRestriction = await restrictionsModel.getRestriction(guildId);
 
-    if (getRestriction.status && getRestriction.restriction!.signalChannel != null) {
+        if (getRestriction.restriction!.signalChannel == null) return;
         const getPermissions = await permissionsModel.getPermissions(guildId);
 
-        if (!getPermissions.status) {
-            const getTreckBlock = await blocksModel.getTreckBlock(author.id, guildId);
-
-            if (!getTreckBlock.status) {
-                switch (type) {
-                    case "ban":
-                        if (getRestriction.restriction!.maxBans != null) {
-                            const addBlock = await blocksModel.addBlock(author.id, guildId);
-                            if (getRestriction.restriction!.maxBans == 1) {
-                                await blocksModel.updateBlock(addBlock.id!, { bans: 1, status: 1 });
-                                await signal(getRestriction.restriction!.signalChannel, addBlock.id!);
-                                await author.send({
-                                    embeds: [activeBlock("Blocked")]
-                                });
-                            } else {
-                                await blocksModel.updateBlock(addBlock.id!, { bans: 1 });
-                            }
-                        }
-                        break;
-                    case "mute":
-                        if (getRestriction.restriction!.maxMutes != null) {
-                            const addBlock = await blocksModel.addBlock(author.id, guildId);
-                            if (getRestriction.restriction!.maxMutes == 1) {
-                                await blocksModel.updateBlock(addBlock.id!, { mutes: 1, status: 1 });
-                                await signal(getRestriction.restriction!.signalChannel, addBlock.id!);
-                                await author.send({
-                                    embeds: [activeBlock("Blocked")]
-                                });
-                            } else {
-                                await blocksModel.updateBlock(addBlock.id!, { mutes: 1 });
-                            }
-                        }
-                        break;
-                    case "warn":
-                        if (getRestriction.restriction!.maxWarns != null) {
-                            const addBlock = await blocksModel.addBlock(author.id, guildId);
-                            if (getRestriction.restriction!.maxWarns == 1) {
-                                await blocksModel.updateBlock(addBlock.id!, { warns: 1, status: 1 });
-                                await signal(getRestriction.restriction!.signalChannel, addBlock.id!);
-                                await author.send({
-                                    embeds: [activeBlock("Blocked")]
-                                });
-                            } else {
-                                await blocksModel.updateBlock(addBlock.id!, { warns: 1 });
-                            }
-                        }
-                        break;
-                    case "pred":
-                        if (getRestriction.restriction!.maxPreds != null) {
-                            const addBlock = await blocksModel.addBlock(author.id, guildId);
-                            if (getRestriction.restriction!.maxPreds == 1) {
-                                await blocksModel.updateBlock(addBlock.id!, { preds: 1, status: 1 });
-                                await signal(getRestriction.restriction!.signalChannel, addBlock.id!);
-                                await author.send({
-                                    embeds: [activeBlock("Blocked")]
-                                });
-                            } else {
-                                await blocksModel.updateBlock(addBlock.id!, { preds: 1 });
-                            }
-                        }
-                        break;
-                }
-            } else {
-                switch (type) {
-                    case "ban":
-                        if (getRestriction.restriction!.maxBans != null) {
-                            if (getTreckBlock.block!.bans != null && getTreckBlock.block!.bans + 1 == getRestriction.restriction!.maxBans) {
-                                await blocksModel.updateBlock(getTreckBlock.block!.id, { bans: getTreckBlock.block!.bans + 1, status: 1 });
-                                await signal(getRestriction.restriction!.signalChannel, getTreckBlock.block!.id);
-                                await author.send({
-                                    embeds: [activeBlock("Blocked")]
-                                });
-                            } else if (getTreckBlock.block!.bans == null) {
-                                await blocksModel.updateBlock(getTreckBlock.block!.id, { bans: 1 });
-                            } else {
-                                await blocksModel.updateBlock(getTreckBlock.block!.id, { bans: getTreckBlock.block!.bans + 1 });
-                            }
-                        }
-                        break;
-                    case "mute":
-                        if (getRestriction.restriction!.maxMutes != null) {
-                            if (getTreckBlock.block!.mutes != null && getTreckBlock.block!.mutes + 1 == getRestriction.restriction!.maxMutes) {
-                                await blocksModel.updateBlock(getTreckBlock.block!.id, { mutes: getTreckBlock.block!.mutes + 1, status: 1 });
-                                await signal(getRestriction.restriction!.signalChannel, getTreckBlock.block!.id);
-                                await author.send({
-                                    embeds: [activeBlock("Blocked")]
-                                });
-                            } else if (getTreckBlock.block!.mutes == null) {
-                                await blocksModel.updateBlock(getTreckBlock.block!.id, { mutes: 1 });
-                            } else {
-                                await blocksModel.updateBlock(getTreckBlock.block!.id, { mutes: getTreckBlock.block!.mutes + 1 });
-                            }
-                        }
-                        break;
-                    case "warn":
-                        if (getRestriction.restriction!.maxWarns != null) {
-                            if (getTreckBlock.block!.warns != null && getTreckBlock.block!.warns + 1 == getRestriction.restriction!.maxWarns) {
-                                await blocksModel.updateBlock(getTreckBlock.block!.id, { warns: getTreckBlock.block!.warns + 1, status: 1 });
-                                await signal(getRestriction.restriction!.signalChannel, getTreckBlock.block!.id);
-                                await author.send({
-                                    embeds: [activeBlock("Blocked")]
-                                });
-                            } else if (getTreckBlock.block!.warns == null) {
-                                await blocksModel.updateBlock(getTreckBlock.block!.id, { warns: 1 });
-                            } else {
-                                await blocksModel.updateBlock(getTreckBlock.block!.id, { warns: getTreckBlock.block!.warns + 1 });
-                            }
-                        }
-                        break;
-                    case "pred":
-                        if (getRestriction.restriction!.maxPreds != null) {
-                            if (getTreckBlock.block!.preds != null && getTreckBlock.block!.preds + 1 == getRestriction.restriction!.maxPreds) {
-                                await blocksModel.updateBlock(getTreckBlock.block!.id, { preds: getTreckBlock.block!.preds + 1, status: 1 });
-                                await signal(getRestriction.restriction!.signalChannel, getTreckBlock.block!.id);
-                                await author.send({
-                                    embeds: [activeBlock("Blocked")]
-                                });
-                            } else if (getTreckBlock.block!.preds == null) {
-                                await blocksModel.updateBlock(getTreckBlock.block!.id, { preds: 1 });
-                            } else {
-                                await blocksModel.updateBlock(getTreckBlock.block!.id, { preds: getTreckBlock.block!.preds + 1 });
-                            }
-                        }
-                        break;
-                }
-            }
-        } else {
+        if (getPermissions.status) {
             for (const permission of getPermissions.getPermission!) {
-                if (author.roles.resolve(permission.id) != null) return;
+                if (target.roles.resolve(permission.id) != null) return;
             }
+        }
+        const getTreckBlock = await blocksModel.getTreckBlock(target.id, guildId);
 
-            const getTreckBlock = await blocksModel.getTreckBlock(author.id, guildId);
-
-            if (!getTreckBlock.status) {
-                switch (type) {
-                    case "ban":
-                        if (getRestriction.restriction!.maxBans != null) {
-                            const addBlock = await blocksModel.addBlock(author.id, guildId);
-                            if (getRestriction.restriction!.maxBans == 1) {
-                                await blocksModel.updateBlock(addBlock.id!, { bans: 1, status: 1 });
-                                await signal(getRestriction.restriction!.signalChannel, addBlock.id!);
-                                await author.send({
-                                    embeds: [activeBlock("Blocked")]
-                                });
-                            } else {
-                                await blocksModel.updateBlock(addBlock.id!, { bans: 1 });
-                            }
+        switch (type) {
+            case RESTRICTION_TYPE.BAN:
+                if (getRestriction.restriction!.maxBans != null) {
+                    const id: number = await (async (status: boolean = getTreckBlock.status) => {
+                        if (status) {
+                            return getTreckBlock.block!.id;
+                        } else {
+                            return (await blocksModel.addBlock(target.id, guildId)).id!;
                         }
-                        break;
-                    case "mute":
-                        if (getRestriction.restriction!.maxMutes != null) {
-                            const addBlock = await blocksModel.addBlock(author.id, guildId);
-                            if (getRestriction.restriction!.maxMutes == 1) {
-                                await blocksModel.updateBlock(addBlock.id!, { mutes: 1, status: 1 });
-                                await signal(getRestriction.restriction!.signalChannel, addBlock.id!);
-                                await author.send({
-                                    embeds: [activeBlock("Blocked")]
-                                });
-                            } else {
-                                await blocksModel.updateBlock(addBlock.id!, { mutes: 1 });
-                            }
+                    })();
+                    if (getTreckBlock.status && getTreckBlock.block!.bans != null) {
+                        if (getTreckBlock.block!.bans + 1 == getRestriction.restriction!.maxBans) {
+                            await blocksModel.updateBlock(id, { bans: getTreckBlock.block!.bans + 1, status: 1 });
+                            await this.signal(interaction, getRestriction.restriction!.signalChannel, id, target.id);
+                            await target.send({
+                                embeds: [staffBuilders.embeds.blockSystem(BLOCK_SYSTEM_EMBED_TYPE.BLOCKED_SIGNAL, { target: target.id })]
+                            });
+                        } else {
+                            await blocksModel.updateBlock(id, { bans: getTreckBlock.block!.bans + 1 });
                         }
-                        break;
-                    case "warn":
-                        if (getRestriction.restriction!.maxWarns != null) {
-                            const addBlock = await blocksModel.addBlock(author.id, guildId);
-                            if (getRestriction.restriction!.maxWarns == 1) {
-                                await blocksModel.updateBlock(addBlock.id!, { warns: 1, status: 1 });
-                                await signal(getRestriction.restriction!.signalChannel, addBlock.id!);
-                                await author.send({
-                                    embeds: [activeBlock("Blocked")]
-                                });
-                            } else {
-                                await blocksModel.updateBlock(addBlock.id!, { warns: 1 });
-                            }
-                        }
-                        break;
-                    case "pred":
-                        if (getRestriction.restriction!.maxPreds != null) {
-                            const addBlock = await blocksModel.addBlock(author.id, guildId);
-                            if (getRestriction.restriction!.maxPreds == 1) {
-                                await blocksModel.updateBlock(addBlock.id!, { preds: 1, status: 1 });
-                                await signal(getRestriction.restriction!.signalChannel, addBlock.id!);
-                                await author.send({
-                                    embeds: [activeBlock("Blocked")]
-                                });
-                            } else {
-                                await blocksModel.updateBlock(addBlock.id!, { preds: 1 });
-                            }
-                        }
-                        break;
+                    } else {
+                        await blocksModel.updateBlock(id, { bans: 1 });
+                    }
                 }
-            } else {
-                switch (type) {
-                    case "ban":
-                        if (getRestriction.restriction!.maxBans != null) {
-                            if (getTreckBlock.block!.bans != null && getTreckBlock.block!.bans + 1 == getRestriction.restriction!.maxBans) {
-                                await blocksModel.updateBlock(getTreckBlock.block!.id, { bans: getTreckBlock.block!.bans + 1, status: 1 });
-                                await signal(getRestriction.restriction!.signalChannel, getTreckBlock.block!.id);
-                                await author.send({
-                                    embeds: [activeBlock("Blocked")]
-                                });
-                            } else if (getTreckBlock.block!.bans == null) {
-                                await blocksModel.updateBlock(getTreckBlock.block!.id, { bans: 1 });
-                            } else {
-                                await blocksModel.updateBlock(getTreckBlock.block!.id, { bans: getTreckBlock.block!.bans + 1 });
-                            }
+                break;
+            case RESTRICTION_TYPE.MUTE:
+                if (getRestriction.restriction!.maxMutes != null) {
+                    const id: number = await (async (status: boolean = getTreckBlock.status) => {
+                        if (status) {
+                            return getTreckBlock.block!.id;
+                        } else {
+                            return (await blocksModel.addBlock(target.id, guildId)).id!;
                         }
-                        break;
-                    case "mute":
-                        if (getRestriction.restriction!.maxMutes != null) {
-                            if (getTreckBlock.block!.mutes != null && getTreckBlock.block!.mutes + 1 == getRestriction.restriction!.maxMutes) {
-                                await blocksModel.updateBlock(getTreckBlock.block!.id, { mutes: getTreckBlock.block!.mutes + 1, status: 1 });
-                                await signal(getRestriction.restriction!.signalChannel, getTreckBlock.block!.id);
-                                await author.send({
-                                    embeds: [activeBlock("Blocked")]
-                                });
-                            } else if (getTreckBlock.block!.mutes == null) {
-                                await blocksModel.updateBlock(getTreckBlock.block!.id, { mutes: 1 });
-                            } else {
-                                await blocksModel.updateBlock(getTreckBlock.block!.id, { mutes: getTreckBlock.block!.mutes + 1 });
-                            }
+                    })();
+                    if (getTreckBlock.status && getTreckBlock.block!.mutes != null) {
+                        if (getTreckBlock.block!.mutes + 1 == getRestriction.restriction!.maxMutes) {
+                            await blocksModel.updateBlock(id, { mutes: getTreckBlock.block!.mutes + 1, status: 1 });
+                            await this.signal(interaction, getRestriction.restriction!.signalChannel, id, target.id);
+                            await target.send({
+                                embeds: [staffBuilders.embeds.blockSystem(BLOCK_SYSTEM_EMBED_TYPE.BLOCKED_SIGNAL, { target: target.id })]
+                            });
+                        } else {
+                            await blocksModel.updateBlock(id, { mutes: getTreckBlock.block!.mutes + 1 });
                         }
-                        break;
-                    case "warn":
-                        if (getRestriction.restriction!.maxWarns != null) {
-                            if (getTreckBlock.block!.warns != null && getTreckBlock.block!.warns + 1 == getRestriction.restriction!.maxWarns) {
-                                await blocksModel.updateBlock(getTreckBlock.block!.id, { warns: getTreckBlock.block!.warns + 1, status: 1 });
-                                await signal(getRestriction.restriction!.signalChannel, getTreckBlock.block!.id);
-                                await author.send({
-                                    embeds: [activeBlock("Blocked")]
-                                });
-                            } else if (getTreckBlock.block!.warns == null) {
-                                await blocksModel.updateBlock(getTreckBlock.block!.id, { warns: 1 });
-                            } else {
-                                await blocksModel.updateBlock(getTreckBlock.block!.id, { warns: getTreckBlock.block!.warns + 1 });
-                            }
-                        }
-                        break;
-                    case "pred":
-                        if (getRestriction.restriction!.maxPreds != null) {
-                            if (getTreckBlock.block!.preds != null && getTreckBlock.block!.preds + 1 == getRestriction.restriction!.maxPreds) {
-                                await blocksModel.updateBlock(getTreckBlock.block!.id, { preds: getTreckBlock.block!.preds + 1, status: 1 });
-                                await signal(getRestriction.restriction!.signalChannel, getTreckBlock.block!.id);
-                                await author.send({
-                                    embeds: [activeBlock("Blocked")]
-                                });
-                            } else if (getTreckBlock.block!.preds == null) {
-                                await blocksModel.updateBlock(getTreckBlock.block!.id, { preds: 1 });
-                            } else {
-                                await blocksModel.updateBlock(getTreckBlock.block!.id, { preds: getTreckBlock.block!.preds + 1 });
-                            }
-                        }
-                        break;
+                    } else {
+                        await blocksModel.updateBlock(id, { mutes: 1 });
+                    }
                 }
-            }
+                break;
+            case RESTRICTION_TYPE.WARN:
+                if (getRestriction.restriction!.maxWarns != null) {
+                    const id: number = await (async (status: boolean = getTreckBlock.status) => {
+                        if (status) {
+                            return getTreckBlock.block!.id;
+                        } else {
+                            return (await blocksModel.addBlock(target.id, guildId)).id!;
+                        }
+                    })();
+                    if (getTreckBlock.status && getTreckBlock.block!.warns != null) {
+                        if (getTreckBlock.block!.warns + 1 == getRestriction.restriction!.maxWarns) {
+                            await blocksModel.updateBlock(id, { warns: getTreckBlock.block!.warns + 1, status: 1 });
+                            await this.signal(interaction, getRestriction.restriction!.signalChannel, id, target.id);
+                            await target.send({
+                                embeds: [staffBuilders.embeds.blockSystem(BLOCK_SYSTEM_EMBED_TYPE.BLOCKED_SIGNAL, { target: target.id })]
+                            });
+                        } else {
+                            await blocksModel.updateBlock(id, { warns: getTreckBlock.block!.warns + 1 });
+                        }
+                    } else {
+                        await blocksModel.updateBlock(id, { warns: 1 });
+                    }
+                }
+                break;
+            case RESTRICTION_TYPE.PRED:
+                if (getRestriction.restriction!.maxPreds != null) {
+                    const id: number = await (async (status: boolean = getTreckBlock.status) => {
+                        if (status) {
+                            return getTreckBlock.block!.id;
+                        } else {
+                            return (await blocksModel.addBlock(target.id, guildId)).id!;
+                        }
+                    })();
+                    if (getTreckBlock.status && getTreckBlock.block!.preds != null) {
+                        if (getTreckBlock.block!.preds + 1 == getRestriction.restriction!.maxPreds) {
+                            await blocksModel.updateBlock(id, { preds: getTreckBlock.block!.preds + 1, status: 1 });
+                            await this.signal(interaction, getRestriction.restriction!.signalChannel, id, target.id);
+                            await target.send({
+                                embeds: [staffBuilders.embeds.blockSystem(BLOCK_SYSTEM_EMBED_TYPE.BLOCKED_SIGNAL, { target: target.id })]
+                            });
+                        } else {
+                            await blocksModel.updateBlock(id, { preds: getTreckBlock.block!.preds + 1 });
+                        }
+                    } else {
+                        await blocksModel.updateBlock(id, { preds: 1 });
+                    }
+                }
+                break;
         }
     }
 }
+
+export const restrictions = new Restrictions();

@@ -1,171 +1,107 @@
 import { EmbedBuilder } from "discord.js";
+import locales from "../../locales/index.js";
 
-export function genderSystem(type: "SetSuccess" | "SetErrorManaged" | "SetErrorSystem" | "ResetSuccess" | "ResetErrorSystem", male?: string, female?: string, error?: string) {
-    switch (type) {
-        case "SetSuccess":
-            return new EmbedBuilder({
-                title: "Успешно",
-                description: `Система гендр ролей настроена!\nМужская роль: <@&${male}>\nЖенская роль: <@&${female}>`
-            }).setColor("Green");
-        case "SetErrorManaged":
-            return new EmbedBuilder({
-                title: "Ошибка доступа",
-                description: `Бот не может управлять ролью <@&${error}> для использования её в системе гендр ролей`
-            }).setColor("Red");
-        case "SetErrorSystem":
-            return new EmbedBuilder({
-                title: "Ошибка",
-                description: "Бот не смог обновить настройки системы гендр ролей, возможно указываемые настройки соответствуют существующим"
-            }).setColor("Red");
-        case "ResetSuccess":
-            return new EmbedBuilder({
-                title: "Успешно",
-                description: "Система гендр ролей была успешно сброшена"
-            }).setColor("Green");
-        case "ResetErrorSystem":
-            return new EmbedBuilder({
-                title: "Ошибка",
-                description: "Бот не смог сбросить настройки системы гендр ролей, возможно она не была настроена"
-            }).setColor("Red");
-    }
+export const enum AUDIT_SYSTEM_EMBED_TYPE {
+    SET_SUCCESS,
+    RESET_SUCCESS
 }
 
-export function auditSystem(type: "SetSuccess" | "SetChange" | "SetError" | "ResetSuccess" | "ResetError", channel?: string) {
-    switch (type) {
-        case "SetSuccess":
-            return new EmbedBuilder({
-                title: "Успешно",
-                description: `Канал <#${channel}> успешно установлен в качестве канала аудита`
-            }).setColor("Green");
-        case "SetChange":
-            return new EmbedBuilder({
-                title: "Успешно",
-                description: `Канал аудита успешно был заменён на <#${channel}>`
-            }).setColor("Green");
-        case "SetError":
-            return new EmbedBuilder({
-                title: "Ошибка",
-                description: "Не удалось установить канал аудита"
-            }).setColor("Red");
-        case "ResetSuccess":
-            return new EmbedBuilder({
-                title: "Успешно",
-                description: "Канал аудита был успешно сброшен"
-            }).setColor("Green");
-        case "ResetError":
-            return new EmbedBuilder({
-                title: "Ошибка",
-                description: "Не удалось сбросить канал аудита, возможно он не был установлен"
-            }).setColor("Red");
-    }
+export const enum GENDER_ROLE_SYSTEM_EMBED_TYPE {
+    SET_SUCCESS,
+    CHANGE_SUCCESS,
+    SET_ERROR_MANAGED,
+    RESET_SUCCESS
 }
 
-export function restrictSystem(type: "CreateSuccess" | "CreateError" | "UpdateSuccess" | "UpdateError" | "ResetSuccess" | "ResetError") {
-    switch (type) {
-        case "CreateSuccess":
-            return new EmbedBuilder({
-                title: "Успешно",
-                description: "Настройки ограничений были созданы"
-            }).setColor("Green");
-        case "CreateError":
-            return new EmbedBuilder({
-                title: "Ошибка",
-                description: "Не удалось создать настройки ограничений"
-            }).setColor("Red");
-        case "UpdateSuccess":
-            return new EmbedBuilder({
-                title: "Успешно",
-                description: "Настройки ограничений были обновлены"
-            }).setColor("Green");
-        case "UpdateError":
-            return new EmbedBuilder({
-                title: "Ошибка",
-                description: "Не удалось обновить настройки ограничений, возможно введёные параметры были выставлены ранее"
-            }).setColor("Red");
-        case "ResetSuccess":
-            return new EmbedBuilder({
-                title: "Успешно",
-                description: "Настройки ограничений были сброшены"
-            }).setColor("Green");
-        case "ResetError":
-            return new EmbedBuilder({
-                title: "Ошибка",
-                description: "Не удалось сбросить настройки ограничений, возможно они не были установлены"
-            }).setColor("Red");
-    }
+export const enum RESTRICTION_SYSTEM_EMBED_TYPE {
+    EDIT_SUCCESS,
+    CLEAR_SUCCESS,
+    EDIT_ERROR_DISABLED
+
+}
+export const enum PERMISSION_SYSTEM_EMBED_TYPE {
+    GRAND_SUCCESS,
+    GRAND_ERROR_EXIST,
+    REMOVE_SUCCESS,
+    REMOVE_ERROR_EXIST,
+    CLEAR_SUCCESS
 }
 
-export function grPermission(type: "GrandSuccess" | "GrandErrorExist" | "GrandErrorSystem" | "RemoveSuccess" | "RemoveErrorNotExist" | "RemoveErrorSystem" | "ClearSuccess" | "ClearError", role?: string) {
-    switch (type) {
-        case "GrandSuccess":
-            return new EmbedBuilder({
-                title: "Успешно",
-                description: `Роли <@&${role}> успешно было выдано право на игнорирование ограничений`
-            }).setColor("Green");
-        case "GrandErrorExist":
-            return new EmbedBuilder({
-                title: "Ошибка",
-                description: `Роль <@&${role}> уже имеет право на игнорирование ограничений`
-            }).setColor("Red");
-        case "GrandErrorSystem":
-            return new EmbedBuilder({
-                title: "Ошибка",
-                description: `Не удалось выдать роли <@&${role}> право на игнорирование ограничений`
-            }).setColor("Red");
-        case "RemoveSuccess":
-            return new EmbedBuilder({
-                title: "Успешно",
-                description: `Роль <@&${role}> больше не имеет прав на игнорирование ограничений`
-            }).setColor("Green");
-        case "RemoveErrorNotExist":
-            return new EmbedBuilder({
-                title: "Ошибка",
-                description: `Роль <@&${role}> не имела прав на игнорирование ограничений`
-            }).setColor("Red");
-        case "RemoveErrorSystem":
-            return new EmbedBuilder({
-                title: "Ошибка",
-                description: `Не удалось забрать у роли <@${role}> права на игнорирование ограничений`
-            }).setColor("Red");
-        case "ClearSuccess":
-            return new EmbedBuilder({
-                title: "Успешно",
-                description: `Все права на игнорирование системы ограничений были изъяты`
-            }).setColor("Green");
-        case "ClearError":
-            return new EmbedBuilder({
-                title: "Ошибка",
-                description: `Прав на игнорирование системы ограничений не было найдено`
-            }).setColor("Red");
-    }
+export const enum PREDS_SYSTEM_EMBED_TYPE {
+    SET_SUCCESS,
+    RESET_SUCCESS
 }
 
-export function predsSet(type: "SetSuccess" | "ChangeSuccess" | "ChangeErrorAlready" | "RemoveSuccess" | "RemoveErrorExist", channel?: string) {
-    switch (type) {
-        case "SetSuccess":
-            return new EmbedBuilder({
-                title: `Успешно`,
-                description: `Канал <#${channel}> установлен для записей о предупреждениях`
-            }).setColor("Green");
-        case "ChangeSuccess":
-            return new EmbedBuilder({
-                title: `Успешно`,
-                description: `Канал для записей о предупреждениях изменён на <#${channel}>`
-            }).setColor("Green");
-        case "ChangeErrorAlready":
-            return new EmbedBuilder({
-                title: `Ошибка`,
-                description: `Канал <#${channel}> уже установлен для записей о предупреждениях`
-            }).setColor("Red");
-        case "RemoveSuccess":
-            return new EmbedBuilder({
-                title: `Успешно`,
-                description: `Канал для записей о предупреждениях сброшен`
-            }).setColor("Green");
-        case "RemoveErrorExist":
-            return new EmbedBuilder({
-                title: `Ошибка`,
-                description: `Канал для записей о предупреждениях не существует`
-            }).setColor("Red");
+export class AdminEmbedBuilders {
+    /**
+     * Build audit system embed
+     * @param type Type of embed message
+     * @param replacements Replacements values
+     * @returns Embed
+     */
+    public auditSystem(type: AUDIT_SYSTEM_EMBED_TYPE, replacements: { channel?: string }) {
+        const { channel = "undefined" } = replacements;
+        return new EmbedBuilder({
+            title: locales.embeds.admin.audit[type].title,
+            description: locales.embeds.admin.audit[type].description.replace("{channel}", channel),
+            footer: { text: locales.embeds.admin.audit[type].footer }
+        }).setColor(locales.embeds.admin.audit[type].color);
+    }
+
+    /**
+     * Build gender role system embed
+     * @param type Type of embed message
+     * @param replacements Replacements values
+     * @returns Embed
+     */
+    public genderRoleSystem(type: GENDER_ROLE_SYSTEM_EMBED_TYPE, replacements: { male?: string, female?: string, role?: string }) {
+        const { male = "undefined", female = "underfined", role = "undefined" } = replacements;
+        return new EmbedBuilder({
+            title: locales.embeds.admin.genderRole[type].title,
+            description: locales.embeds.admin.genderRole[type].description.replace("{male}", male).replace("{female}", female).replace("{role}", role)
+        }).setColor(locales.embeds.admin.genderRole[type].color);
+    }
+
+    /**
+     * Build resriction system embed
+     * @param type Type of embed message
+     * @param replacements Replacements values
+     * @returns Embed
+     */
+    public restrictionSystem(type: RESTRICTION_SYSTEM_EMBED_TYPE) {
+        return new EmbedBuilder({
+            title: locales.embeds.admin.restrictions[type].title,
+            description: locales.embeds.admin.restrictions[type].description,
+            footer: { text: locales.embeds.admin.restrictions[type].footer }
+        }).setColor(locales.embeds.admin.restrictions[type].color);
+    }
+
+    /**
+     * Build permission system embed
+     * @param type Type of embed message
+     * @param replacements Replacements values
+     * @returns Embed
+     */
+    public permissionSystem(type: PERMISSION_SYSTEM_EMBED_TYPE, replacements: { role?: string }) {
+        const { role = "undefined" } = replacements;
+        return new EmbedBuilder({
+            title: locales.embeds.admin.permissions[type].title,
+            description: locales.embeds.admin.permissions[type].description.replace("{role}", role)
+        }).setColor(locales.embeds.admin.permissions[type].color);
+    }
+
+    /**
+     * Build preds system embed
+     * @param type Type of embed message
+     * @param replacements Replacements values
+     * @returns Embed
+     */
+    public predsSystem(type: PREDS_SYSTEM_EMBED_TYPE, replacements: { channel?: string }) {
+        const { channel = "undefined" } = replacements;
+        return new EmbedBuilder({
+            title: locales.embeds.admin.preds[type].title,
+            description: locales.embeds.admin.preds[type].description.replace("{channel}", channel),
+            footer: { text: locales.embeds.admin.preds[type].footer }
+        }).setColor(locales.embeds.admin.preds[type].color);
     }
 }

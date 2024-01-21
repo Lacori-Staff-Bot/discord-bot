@@ -1,236 +1,146 @@
 import { EmbedBuilder } from "discord.js";
+import locales from "../../locales/index.js";
 
-export function genderRole(type: "Success" | "Error", member?: string, role?: 0 | 1) {
-    switch (type) {
-        case "Success":
-            return new EmbedBuilder({
-                title: "Успешно",
-                description: `<@${member}> была выдана ${role == 0 ? "мужская" : "женская"} роль`
-            }).setColor("Green");
-        case "Error":
-            return new EmbedBuilder({
-                title: "Ошибка",
-                description: "Система гендр ролей не настроена"
-            }).setColor("Red");
-    }
+export const enum BLOCK_SYSTEM_EMBED_TYPE {
+    BLOCKED_INFO,
+    BLOCKED_SIGNAL,
+    ERROR_HAS_BLOCKED,
+    UNBLOCKED_SIGNAL,
+    UNBLOCKED_INFO,
+    ERROR_NOT_BLOCKED
 }
 
-export function activeBlock(type: "Blocked" | "Error" | "Signal" | "Unblocked" | "Info" | "ErrorNotFound", target?: string) {
-    switch (type) {
-        case "Blocked":
-            return new EmbedBuilder({
-                title: "Система ограничений",
-                description: "Вы превысили установленное ограничение команд и не можете их более использовать до решения высшей администрации"
-            }).setColor("Blurple");
-        case "Error":
-            return new EmbedBuilder({
-                title: "Ошибка",
-                description: "Вы заблокированы и не можете использовать команды наказания до решения высшей администрации"
-            }).setColor("Red");
-        case "Signal":
-            return new EmbedBuilder({
-                title: "Система ограничений",
-                description: `Пользователь <@${target}> превысил установленные ограничения команд наказаний, доступ к командам был изъят`
-            }).setColor("Blurple");
-        case "Unblocked":
-            return new EmbedBuilder({
-                title: "Система ограничений",
-                description: `Пользователь <@${target}> был разблокирован и вновь может использовать команды наказания`
-            }).setColor("Blurple");
-        case "Info":
-            return new EmbedBuilder({
-                title: "Система ограничений",
-                description: "Вы были разблокированы и вновь можете использовать команды наказания"
-            }).setColor("Blurple");
-        case "ErrorNotFound":
-            return new EmbedBuilder({
-                title: "Ошибка",
-                description: "Блокировка не найдена"
-            }).setColor("Red");
-    }
+export const enum GENDER_ROLE_EMBED_TYPE {
+    GRANT_SUCCESS,
+    ERROR_SYSTEM_DISABLED
 }
 
-export function banUnban(type: "BanSuccess" | "BanErrorMod" | "BanErrorActive" | "BanErrorSystem" | "BanAudit" | "UnbanSuccess" | "UnBanErrorActiveButton" | "UnbanErrorActive" | "UnbanErrorSystem" | "UnbanAudit" | "BanInfo" | "UnbanInfo", target?: string, reason?: string, author?: string, guildName?: string) {
-    switch (type) {
-        case "BanSuccess":
-            return new EmbedBuilder({
-                title: "Успешно",
-                description: `Пользователь <@${target}> был забанен на сервере по причине: ${reason}`
-            }).setColor("Green");
-        case "BanErrorMod":
-            return new EmbedBuilder({
-                title: "Ошибка",
-                description: `Пользователя <@${target}> нельзя забанить на сервере`
-            }).setColor("Red");
-        case "BanErrorActive":
-            return new EmbedBuilder({
-                title: "Ошибка",
-                description: `Пользователь <@${target}> уже имеет активный бан`
-            }).setColor("Red");
-        case "BanErrorSystem":
-            return new EmbedBuilder({
-                title: "Ошибка",
-                description: `Не удалось забанить пользователя, попробуйте позже`
-            }).setColor("Red");
-        case "BanAudit":
-            return new EmbedBuilder({
-                title: "Бан",
-                description: `Пользователь <@${target}> был забанен.\nВыдал: <@${author}>\nПричина: ${reason}`
-            }).setColor("Orange");
-        case "UnbanSuccess":
-            return new EmbedBuilder({
-                title: "Успешно",
-                description: `Пользователь <@${target}> был разбанен на сервере`
-            }).setColor("Green");
-        case "UnBanErrorActiveButton":
-            return new EmbedBuilder({
-                title: "Ошибка",
-                description: `Пользователь не имеет активных банов`
-            }).setColor("Red");
-        case "UnbanErrorActive":
-            return new EmbedBuilder({
-                title: "Ошибка",
-                description: `Пользователь <@${target}> не имеет активных банов`
-            }).setColor("Red");
-        case "UnbanErrorSystem":
-            return new EmbedBuilder({
-                title: "Ошибка",
-                description: `Не удалось разбанить пользователя, попробуйте позже`
-            }).setColor("Red");
-        case "UnbanAudit":
-            return new EmbedBuilder({
-                title: "Разбан",
-                description: `Пользователь <@${target}> был разбанен.\nСнял: <@${author}>`
-            }).setColor("Orange");
-        case "BanInfo":
-            return new EmbedBuilder({
-                title: "Забанен",
-                description: `Пользователь <@${author}> выдал вам бан на сервере: ${guildName}.\nПричина: ${reason}\nЕсли в течении 24 часов с вас не снимут бан, то вы будете забанены системно`
-            }).setColor("Blurple");
-        case "UnbanInfo":
-            return new EmbedBuilder({
-                title: "Разбанен",
-                description: `Пользователь  <@${author}> снял с вас бан на сервере: ${guildName}`
-            }).setColor("Blurple");
-    }
+export const enum BANS_EMBED_TYPE {
+    BAN_SUCCESS,
+    BAN_ERROR_MOD,
+    BAN_ERROR_ACTIVE,
+    BAN_INFO,
+    BAN_AUDIT,
+    UNBAN_SUCCESS,
+    UNBAN_ERROR_ACTIVE,
+    UNBAN_INFO,
+    UNBAN_AUDIT
 }
 
-export function MuteUnmute(type: "MuteSuccess" | "MuteErrorMod" | "MuteAudit" | "MuteInfo" | "UnmuteSuccess" | "UnmuteErrorMod" | "UnmuteAudit" | "UnmuteInfo", target?: string, reasone?: string, time?: number, author?: string, guildName?: string) {
-    switch (type) {
-        case "MuteSuccess":
-            return new EmbedBuilder({
-                title: "Успешно",
-                description: `Пользователь <@${target}> был отстранён до <t:${time}>.\nПричина: ${reasone}.`
-            }).setColor("Green");
-        case "MuteErrorMod":
-            return new EmbedBuilder({
-                title: "Ошибка",
-                description: `Невозможно отстранить <@${target}>, пользователь имеет имунитет.`
-            }).setColor("Red");
-        case "MuteAudit":
-            return new EmbedBuilder({
-                title: "Мут",
-                description: `Пользователь <@${target}> был отстранён до <t:${time}>.\nПричина: ${reasone}\nВыдал: <@${author}>`
-            }).setColor("Orange");
-        case "MuteInfo":
-            return new EmbedBuilder({
-                title: `Отстранён - ${guildName}`,
-                description: `Вы были отстранены до <t:${time}> по причине: ${reasone}.\nАвтор: <@${author}>`
-            }).setColor("Blurple");
-        case "UnmuteSuccess":
-            return new EmbedBuilder({
-                title: "Успешно",
-                description: `Отстранение было снято с <@${target}>`
-            }).setColor("Green");
-        case "UnmuteErrorMod":
-            return new EmbedBuilder({
-                title: "Ошибка",
-                description: `Пользователь <@${target}> не может быть отстранён и не нуждается в снятии наказания`
-            }).setColor("Red");
-        case "UnmuteAudit":
-            return new EmbedBuilder({
-                title: "Размут",
-                description: `Пользователь <@${target}> был восстановлен в праве общения <@${author}>`
-            }).setColor("Orange");
-        case "UnmuteInfo":
-            return new EmbedBuilder({
-                title: `Восстановлен - ${guildName}`,
-                description: `Пользователь <@${author}> снял с вас ограничение на общение`
-            }).setColor("Blurple");
-    }
+export const enum MUTES_EMBED_TYPE {
+    MUTE_SUCCESS,
+    MUTE_ERROR_MOD,
+    MUTE_INFO,
+    MUTE_AUDIT,
+    UNMUTE_SUCCESS,
+    UNMUTE_INFO,
+    UNMUTE_AUDIT
 }
 
-export function warnUnwarn(type: "WarnSuccess" | "WarnErrorMod" | "WarnInfo" | "WarnAudit" | "UnwarnSuccess" | "UnwarnErrorExist" | "UnwarnInfo" | "WarnBan" | "WarnBanAudit", target?: string, reason?: string, author?: string, guildName?: string) {
-    switch (type) {
-        case "WarnSuccess":
-            return new EmbedBuilder({
-                title: `Успешно`,
-                description: `Пользователю <@${target}> был выдан варн`
-            }).setColor("Green");
-        case "WarnErrorMod":
-            return new EmbedBuilder({
-                title: `Ошибка`,
-                description: `Невозможно выдать варн пользователю <@${target}>, пользователь имеет имунитет`
-            }).setColor("Red");
-        case "WarnInfo":
-            return new EmbedBuilder({
-                title: `Варн - ${guildName}`,
-                description: `Вам был видан варн <@${author}>\nПричина: ${reason}`
-            }).setColor("Blurple");
-        case "WarnAudit":
-            return new EmbedBuilder({
-                title: `Варн`,
-                description: `Пользователь <@${author}> выдал варн <@${target}> по причине: ${reason}`
-            }).setColor("Orange");
-        case "UnwarnSuccess":
-            return new EmbedBuilder({
-                title: `Успешно`,
-                description: `Варн был снят`
-            }).setColor("Green");
-        case "UnwarnErrorExist":
-            return new EmbedBuilder({
-                title: `Ошибка`,
-                description: `Данный варн не активен`
-            }).setColor("Red");
-        case "UnwarnInfo":
-            return new EmbedBuilder({
-                title: `Снятие варна - ${guildName}`,
-                description: `Пользователь <@${author}> снял у вас активный варн`
-            }).setColor("Blurple");
-        case "WarnBan":
-            return new EmbedBuilder({
-                title: `Забанен - ${guildName}`,
-                description: "Вы были забанены системой за получение 3 варнов в течении недели"
-            }).setColor("Blurple");
-        case "WarnBanAudit":
-            return new EmbedBuilder({
-                title: `Бан`,
-                description: `Пользователь <@${target}> был забанен системой за получение 3 варнов в течении недели`
-            })
-    }
+export const enum WARNS_EMBED_TYPE {
+    WARN_SUCCESS,
+    WARN_ERROR_MOD,
+    WARN_INFO,
+    WARN_AUDIT,
+    WANR_BAN,
+    WARN_BAN_AUDIT,
+    UNWARN_SUCCESS,
+    UNWARN_ERROR_EXIST,
+    UNWARN_INFO,
+    UNWARN_AUDIT
 }
 
-export function givePred(type: "Success" | "Pred" | "Info" | "Error", target?: string, author?: string, reasone?: string, guildName?: string) {
-    switch (type) {
-        case "Success":
-            return new EmbedBuilder({
-                title: `Успешно`,
-                description: `Пользователю <@${target}> было выдано предупреждение`
-            }).setColor("Green");
-        case "Pred":
-            return new EmbedBuilder({
-                title: `Предупреждение`,
-                description: `Пользователь <@${author}> выдал <@${target}> предупреждение по причине: ${reasone}`
-            }).setColor("Blurple");
-        case "Info":
-            return new EmbedBuilder({
-                title: `Предупреждение - ${guildName}`,
-                description: `Пользователь <@${author}> выдал вам предупреждение по причине: ${reasone}`
-            }).setColor("Blurple");
-        case "Error":
-            return new EmbedBuilder({
-                title: `Ошибка`,
-                description: `Система предупреждений не настроена`
-            }).setColor("Red");
+export const enum PREDS_EMBED_TYPE {
+    PRED_SUCCESS,
+    PRED_INFO,
+    PRED_SIGNAL,
+    ERROR_SYSTEM_DISABLED
+}
+
+export class StaffEmbedBuilders {
+    /**
+     * Build block system embed
+     * @param type Type of embed message
+     * @param replacements Replacements values
+     * @returns Embed
+     */
+    public blockSystem(type: BLOCK_SYSTEM_EMBED_TYPE, replacements: { target?: string }) {
+        const { target = "undefined" } = replacements;
+        return new EmbedBuilder({
+            title: locales.embeds.staff.blocks[type].title,
+            description: locales.embeds.staff.blocks[type].description.replace("{target}", target)
+        }).setColor(locales.embeds.staff.blocks[type].color);
+    }
+
+    /**
+     * Build gender role system embed
+     * @param type Type of embed message
+     * @param replacements Replacements values
+     * @returns Embed
+     */
+    public genderRoleSystem(type: GENDER_ROLE_EMBED_TYPE, replacements: { target?: string, role?: 0 | 1 }) {
+        const { target = "undefined", role = 0 } = replacements;
+        return new EmbedBuilder({
+            title: locales.embeds.staff.genderRole[type].title,
+            description: locales.embeds.staff.genderRole[type].description.replace("{target}", target).replace("{role}", role == 0 ? locales.embeds.staff.genderRole[0].male : locales.embeds.staff.genderRole[0].female)
+        }).setColor(locales.embeds.staff.genderRole[type].color);
+    }
+
+    /**
+     * Build ban system embed
+     * @param type Type of embed message
+     * @param replacements Replacements values
+     * @returns Embed
+     */
+    public banSystem(type: BANS_EMBED_TYPE, replacements: { target?: string, reasone?: string, author?: string, guildName?: string }) {
+        const { target = "undefined", reasone = "undefined", author = "undefined", guildName = "undefined" } = replacements;
+        return new EmbedBuilder({
+            title: locales.embeds.staff.bans[type].title.replace("{guildName}", guildName),
+            description: locales.embeds.staff.bans[type].description.replace("{target}", target).replace("{author}", author).replace("{reasone}", reasone),
+            footer: type == BANS_EMBED_TYPE.BAN_INFO ? { text: locales.embeds.staff.bans[type].footer! } : undefined
+        }).setColor(locales.embeds.staff.bans[type].color);
+    }
+
+    /**
+     * Build mute system embed
+     * @param type Type of embed message
+     * @param replacements Replacements values
+     * @returns Embed
+     */
+    public muteSystem(type: MUTES_EMBED_TYPE, replacements: { target?: string, reasone?: string, time?: number, author?: string, guildName?: string }) {
+        const { target = "undefined", reasone = "undefined", time = 0, author = "undefined", guildName = "undefined" } = replacements;
+        return new EmbedBuilder({
+            title: locales.embeds.staff.mutes[type].title.replace("{guildName}", guildName),
+            description: locales.embeds.staff.mutes[type].description.replace("{target}", target).replace("{author}", author).replace("{time}", `${time}`).replace("{reasone}", reasone)
+        }).setColor(locales.embeds.staff.mutes[type].color);
+    }
+
+    /**
+     * Build warn system embed
+     * @param type Type of embed message
+     * @param replacements Replacements values
+     * @returns Embed
+     */
+    public warnSystem(type: WARNS_EMBED_TYPE, replacements: { target?: string, reasone?: string, author?: string, guildName?: string }) {
+        const { target = "undefined", reasone = "undefined", author = "undefined", guildName = "undefined" } = replacements;
+        return new EmbedBuilder({
+            title: locales.embeds.staff.warns[type].title.replace("{guildName}", guildName),
+            description: locales.embeds.staff.warns[type].description.replace("{target}", target).replace("{author}", author).replace("{reasone}", reasone),
+            footer: type == WARNS_EMBED_TYPE.WARN_INFO || type == WARNS_EMBED_TYPE.WANR_BAN ? { text: locales.embeds.staff.warns[type].footer! } : undefined
+        }).setColor(locales.embeds.staff.warns[type].color);
+    }
+
+    /**
+     * Build pred system embed
+     * @param type Type of embed message
+     * @param replacements Replacements values
+     * @returns Embed
+     */
+    public predSystem(type: PREDS_EMBED_TYPE, replacements: { target?: string, author?: string, reasone?: string, guildName?: string }) {
+        const { target = "undefined", author = "undefined", reasone = "undefined", guildName = "undefined" } = replacements;
+        return new EmbedBuilder({
+            title: locales.embeds.staff.preds[type].title.replace("{guildName}", guildName),
+            description: locales.embeds.staff.preds[type].description.replace("{target}", target).replace("{author}", author).replace("{reasone}", reasone)
+        }).setColor(locales.embeds.staff.preds[type].color);
     }
 }
