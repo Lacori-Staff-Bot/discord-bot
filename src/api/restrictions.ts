@@ -57,5 +57,42 @@ restrictions.post("/", async (req, res) => {
             res.send(JSON.stringify({ channels: parsedChannels, roles: parsedRoles, signalChannel: getRestriction.restriction!.signalChannel, maxBans: getRestriction.restriction!.maxBans, maxMutes: getRestriction.restriction!.maxMutes, maxWarns: getRestriction.restriction!.maxWarns, maxPreds: getRestriction.restriction!.maxPreds }));
             break;
         }
+        case "set_settings": {
+            if (req.body.cookie == undefined || req.body.key == undefined || req.body.guildId == undefined || req.body.signalChannel == undefined || req.body.maxBans == undefined || req.body.maxMutes == undefined || req.body.maxWarns == undefined || req.body.maxPreds == undefined || req.body.permissions == undefined) {
+                res.sendStatus(500);
+                return;
+            }
+
+            const verifyCookie = await authCookiesModel.verifyCookie(req.body.cookie, req.body.key);
+
+            if (!verifyCookie.status) {
+                res.sendStatus(501);
+                await authCookiesModel.removeCookie(req.body.cookie);
+                return;
+            }
+
+            const updateRestrictions = await restrictionsModel.updateRestriction(req.body.guildId, {
+                signalChannel: req.body.signalChannel != 0 ? req.body.signalChannel : null,
+                maxBans: req.body.maxBans != 0 ? req.body.maxBans : null,
+                maxMutes: req.body.maxMutes != 0 ? req.body.maxMutes : null,
+                maxWarns: req.body.maxWarns != 0 ? req.body.maxWarns : null,
+                maxPreds: req.body.maxPreds != 0 ? req.body.maxPreds : null
+            });
+
+            await permissionsModel.clearPermission(req.body.guildId);
+            for (const permission of req.body.permissions) {
+                await permissionsModel.addPermission(permission, req.body.guildId);
+            }
+
+            if (!updateRestrictions.status) {
+                res.sendStatus(502);
+            } else {
+                res.sendStatus(200);
+            }
+
+            break;
+        }
     }
 });
+
+export default restrictions;
