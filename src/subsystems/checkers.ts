@@ -5,6 +5,7 @@ import bansModel from "../mysqlModels/bans.js";
 import blocksModel from "../mysqlModels/blocks.js";
 import warnsModel from "../mysqlModels/warns.js";
 import { CLIENT_ID, CLIENT_SECRET } from "../api/common.js";
+import authCookiesModel from "../mysqlModels/authcookies.js";
 
 interface Token {
     token_type: string,
@@ -49,6 +50,17 @@ async function renewAuthTokens() {
 
                 await authTokensModel.updateToken(token.userId, { access_token: parsedRefresh.access_token, refresh_token: parsedRefresh.refresh_token, token_type: parsedRefresh.token_type });
             })
+        }
+    }
+}
+
+async function checkAuthCookies() {
+    const data = Date.now();
+    const getCookies = await authCookiesModel.getCookies();
+
+    if (getCookies.status) {
+        for (const cookie of getCookies.cookies!) {
+            if (cookie.data < data) await authCookiesModel.removeCookie(cookie.cookie);
         }
     }
 }
@@ -102,5 +114,6 @@ export function enableCheckers() {
     setInterval(checkBans, 60 * 60 * 1000);
     setInterval(checkBlocks, 60 * 1000);
     setInterval(checkWarns, 60 * 60 * 1000);
+    setInterval(checkAuthCookies, 60 * 60 * 1000);
     setInterval(renewAuthTokens, 60 * 1000);
 }

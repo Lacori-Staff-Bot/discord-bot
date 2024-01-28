@@ -26,6 +26,21 @@ class AuthCookies {
         }
     }
 
+    async getCookies() {
+        const getCookies = await databaseController.getRequest("SELECT * FROM `auth_cookies`", []) as AuthCookie[];
+
+        if (!getCookies.length) {
+            return {
+                status: false
+            };
+        } else {
+            return {
+                status: true,
+                cookies: getCookies
+            };
+        }
+    }
+
     async getCookieByUser(userId: string) {
         const getCookieByUser = await databaseController.getRequest("SELECT * FROM `auth_cookies` WHERE userId = ?", [userId]) as AuthCookie[];
 

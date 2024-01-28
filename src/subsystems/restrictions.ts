@@ -61,6 +61,12 @@ class Restrictions {
                         } else {
                             await blocksModel.updateBlock(id, { bans: getTreckBlock.block!.bans + 1 });
                         }
+                    } else if (getRestriction.restriction!.maxBans == 1) {
+                        await blocksModel.updateBlock(id, { bans: 1, status: 1 });
+                        await this.signal(interaction, getRestriction.restriction!.signalChannel, id, target.id);
+                        await target.send({
+                            embeds: [staffBuilders.embeds.blockSystem(BLOCK_SYSTEM_EMBED_TYPE.BLOCKED_SIGNAL, { target: target.id })]
+                        });
                     } else {
                         await blocksModel.updateBlock(id, { bans: 1 });
                     }
@@ -85,6 +91,12 @@ class Restrictions {
                         } else {
                             await blocksModel.updateBlock(id, { mutes: getTreckBlock.block!.mutes + 1 });
                         }
+                    } else if (getRestriction.restriction!.maxMutes == 1) {
+                        await blocksModel.updateBlock(id, { mutes: 1, status: 1 });
+                        await this.signal(interaction, getRestriction.restriction!.signalChannel, id, target.id);
+                        await target.send({
+                            embeds: [staffBuilders.embeds.blockSystem(BLOCK_SYSTEM_EMBED_TYPE.BLOCKED_SIGNAL, { target: target.id })]
+                        });
                     } else {
                         await blocksModel.updateBlock(id, { mutes: 1 });
                     }
@@ -109,6 +121,12 @@ class Restrictions {
                         } else {
                             await blocksModel.updateBlock(id, { warns: getTreckBlock.block!.warns + 1 });
                         }
+                    } else if (getRestriction.restriction!.maxWarns == 1) {
+                        await blocksModel.updateBlock(id, { warns: 1, status: 1 });
+                        await this.signal(interaction, getRestriction.restriction!.signalChannel, id, target.id);
+                        await target.send({
+                            embeds: [staffBuilders.embeds.blockSystem(BLOCK_SYSTEM_EMBED_TYPE.BLOCKED_SIGNAL, { target: target.id })]
+                        });
                     } else {
                         await blocksModel.updateBlock(id, { warns: 1 });
                     }
@@ -133,6 +151,12 @@ class Restrictions {
                         } else {
                             await blocksModel.updateBlock(id, { preds: getTreckBlock.block!.preds + 1 });
                         }
+                    } else if (getRestriction.restriction!.maxPreds == 1) {
+                        await blocksModel.updateBlock(id, { preds: 1, status: 1 });
+                        await this.signal(interaction, getRestriction.restriction!.signalChannel, id, target.id);
+                        await target.send({
+                            embeds: [staffBuilders.embeds.blockSystem(BLOCK_SYSTEM_EMBED_TYPE.BLOCKED_SIGNAL, { target: target.id })]
+                        });
                     } else {
                         await blocksModel.updateBlock(id, { preds: 1 });
                     }
