@@ -2,7 +2,8 @@ import { dirname, importx } from "@discordx/importer";
 import type { Interaction, Message } from "discord.js";
 import { IntentsBitField } from "discord.js";
 import { Client } from "discordx";
-import app from "./api/main.js";
+import { app } from "./api/common.js";
+import { enableCheckers } from "./subsystems/checkers.js";
 
 export const bot = new Client({
   intents: [
@@ -23,6 +24,8 @@ export const bot = new Client({
 
 bot.once("ready", async () => {
   await bot.initApplicationCommands();
+
+  enableCheckers();
 
   console.log("Bot started");
 });
