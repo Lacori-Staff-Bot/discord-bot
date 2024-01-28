@@ -83,6 +83,26 @@ class Warns {
     }
 
     /**
+     * Find active warn records by guildId
+     * @param guildId guildId of warn records
+     * @returns Status of exist records and records if status = true
+     */
+    public async getActiveWarnsForGuild(guildId: string) {
+        const getActiveWarnsForId = await databaseController.getRequest("SELECT * FROM `warns` WHERE guildId = ? AND status = 0", [guildId]) as Warn[];
+
+        if (!getActiveWarnsForId.length) {
+            return {
+                status: false
+            };
+        } else {
+            return {
+                status: true,
+                warns: getActiveWarnsForId
+            };
+        }
+    }
+
+    /**
      * Find active warn record by id
      * @param id Id of warn record
      * @returns Status of exist record and record if status = true
@@ -92,7 +112,7 @@ class Warns {
             status: true,
             warn: this.warns[id]
         };
-        const getWarnById = await databaseController.getRequest("SELECT * FROM `warns` WHERE id = ?", [id]) as Warn[];
+        const getWarnById = await databaseController.getRequest("SELECT * FROM `warns` WHERE id = ? AND status = 0", [id]) as Warn[];
 
         if (!getWarnById.length) {
             return {

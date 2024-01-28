@@ -104,6 +104,26 @@ class Blocks {
     }
 
     /**
+     * Find active block records by guildId
+     * @param guildId Guild of block record
+     * @returns Status of exist records and records if status = true
+     */
+    public async getActiveBlocksForGuild(guildId: string) {
+        const getActiveBlocksForGuild = await databaseController.getRequest("SELECT * FROM `blocks` WHERE guildId = ? AND status = 1", [guildId]) as Block[];
+
+        if (!getActiveBlocksForGuild.length) {
+            return {
+                status: false
+            };
+        } else {
+            return {
+                status: true,
+                blocks: getActiveBlocksForGuild
+            };
+        }
+    }
+
+    /**
      * Find active block record by target info
      * @param target Target of block record
      * @param guildId Guild of block record

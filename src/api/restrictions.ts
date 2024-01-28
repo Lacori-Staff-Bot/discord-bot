@@ -2,32 +2,34 @@ import express from "express";
 import restrictionsModel from "../mysqlModels/restrictions.js";
 import authCookiesModel from "../mysqlModels/authcookies.js";
 import { bot } from "../main.js";
-import { ChannelType } from "discord.js";
+import { ChannelType, PermissionsBitField } from "discord.js";
 import permissionsModel from "../mysqlModels/permissions.js";
 const restrictions = express.Router();
 
 restrictions.post("/", async (req, res) => {
-    if (!req.body.type) {
+    if (req.body.type == undefined || req.body.cookie == undefined || req.body.key == undefined || req.body.guildId == undefined) {
         res.sendStatus(500);
+        return;
+    }
+
+    const verifyCookie = await authCookiesModel.verifyCookie(req.body.cookie, req.body.key);
+
+    if (!verifyCookie.status) {
+        res.sendStatus(501);
+        await authCookiesModel.removeCookie(req.body.cookie);
+        return;
+    }
+
+    const guild = await bot.guilds.fetch(req.body.guildId);
+
+    if (!(await guild.members.fetch(verifyCookie.cookie!.userId)).permissions.has(PermissionsBitField.Flags.Administrator, true)) {
+        res.sendStatus(501);
+        await authCookiesModel.removeCookie(req.body.cookie);
         return;
     }
 
     switch (req.body.type) {
         case "get_info": {
-            if (req.body.cookie == undefined || req.body.key == undefined || req.body.guildId == undefined) {
-                res.sendStatus(500);
-                return;
-            }
-
-            const verifyCookie = await authCookiesModel.verifyCookie(req.body.cookie, req.body.key);
-
-            if (!verifyCookie.status) {
-                res.sendStatus(501);
-                await authCookiesModel.removeCookie(req.body.cookie);
-                return;
-            }
-
-            const guild = await bot.guilds.resolve(req.body.guildId);
             const roles = (await guild.roles.fetch()).filter(role => role.editable && role.name != "@everyone");
             const channels = (await guild.channels.fetch()).filter(channel => channel?.type == ChannelType.GuildText);
 
@@ -54,20 +56,12 @@ restrictions.post("/", async (req, res) => {
             else
                 parsedChannels.push({ id: 1, name: "" });
 
-            res.send(JSON.stringify({ channels: parsedChannels, roles: parsedRoles, signalChannel: getRestriction.restriction!.signalChannel, maxBans: getRestriction.restriction!.maxBans, maxMutes: getRestriction.restriction!.maxMutes, maxWarns: getRestriction.restriction!.maxWarns, maxPreds: getRestriction.restriction!.maxPreds }));
+            res.send({ channels: parsedChannels, roles: parsedRoles, signalChannel: getRestriction.restriction!.signalChannel, maxBans: getRestriction.restriction!.maxBans, maxMutes: getRestriction.restriction!.maxMutes, maxWarns: getRestriction.restriction!.maxWarns, maxPreds: getRestriction.restriction!.maxPreds });
             break;
         }
         case "set_settings": {
-            if (req.body.cookie == undefined || req.body.key == undefined || req.body.guildId == undefined || req.body.signalChannel == undefined || req.body.maxBans == undefined || req.body.maxMutes == undefined || req.body.maxWarns == undefined || req.body.maxPreds == undefined || req.body.permissions == undefined) {
+            if (req.body.signalChannel == undefined || req.body.maxBans == undefined || req.body.maxMutes == undefined || req.body.maxWarns == undefined || req.body.maxPreds == undefined || !req.body.permissions) {
                 res.sendStatus(500);
-                return;
-            }
-
-            const verifyCookie = await authCookiesModel.verifyCookie(req.body.cookie, req.body.key);
-
-            if (!verifyCookie.status) {
-                res.sendStatus(501);
-                await authCookiesModel.removeCookie(req.body.cookie);
                 return;
             }
 

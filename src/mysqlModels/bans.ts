@@ -59,6 +59,26 @@ class Bans {
     }
 
     /**
+     * Find active ban records by guildId
+     * @param guildId Id of guild
+     * @returns Status of exist records and records if status = true
+     */
+    public async getActiveBansForGuild(guildId: string) {
+        const getActiveBansForGuild = await databaseController.getRequest("SELECT * FROM `bans` WHERE guildId = ? AND status != 2", [guildId]) as Ban[];
+
+        if (!getActiveBansForGuild.length) {
+            return {
+                status: false
+            };
+        } else {
+            return {
+                status: true,
+                bans: getActiveBansForGuild
+            };
+        }
+    }
+
+    /**
      * Find active ban record by id
      * @param id Id of ban record
      * @returns Status of exist record and record if status = true

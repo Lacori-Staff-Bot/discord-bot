@@ -93,12 +93,12 @@ export async function audit(type: AUDIT_TYPE, interaction: CommandInteraction, r
                 const audit = await interaction.guild!.channels.resolve(getGuild.guild!.audit) as GuildTextBasedChannel | null;
                 if (audit != null) {
                     await audit.send({
-                        embeds: [staffBuilders.embeds.warnSystem(WARNS_EMBED_TYPE.UNWARN_AUDIT, { author: interaction.user.id, target })],
+                        embeds: [staffBuilders.embeds.warnSystem(WARNS_EMBED_TYPE.WARN_BAN_AUDIT, { target })],
                         components: [staffBuilders.buttons.unban(id)]
                     });
                 } else {
                     await (await interaction.guild!.fetchOwner()).send({
-                        embeds: [staffBuilders.embeds.warnSystem(WARNS_EMBED_TYPE.UNWARN_AUDIT, { author: interaction.user.id, target })],
+                        embeds: [staffBuilders.embeds.warnSystem(WARNS_EMBED_TYPE.WARN_BAN_AUDIT, { target })],
                         components: [staffBuilders.buttons.unban(id)]
                     });
                 }

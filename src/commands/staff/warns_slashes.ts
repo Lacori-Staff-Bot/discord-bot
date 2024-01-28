@@ -49,7 +49,7 @@ export class StaffWarnsSlashes {
                     });
                 } else {
                     const addWarn = await warnsModel.addWarn(interaction.guildId!, member.id, interaction.user.id, reasone);
-                    const addBan = await bansModel.addBan(interaction.user.id, member.id, interaction.guildId!, "Warn");
+                    const addBan = await bansModel.addBan("0", member.id, interaction.guildId!, "Достижение лимита варнов");
                     await member.timeout(25 * 60 * 60 * 1000, "Max warns");
 
                     await interaction.reply({
