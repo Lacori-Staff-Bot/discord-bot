@@ -50,6 +50,14 @@ export const enum REPORT_SYSTEM_EMBED_TYPE {
     REPORT_RAITED_ERROR_EXIST
 }
 
+export const enum ANTI_CRASH_SYSTEM_EMBED_TYPE {
+    DELETED_TEXT_CHANNEL,
+    DELETED_VOICE_CHANNEL,
+    DELETED_CATEGORY,
+    BOT_ADDED,
+    ROLE_DELETED
+}
+
 export class AdminEmbedBuilders {
     /**
      * Build audit system embed
@@ -122,12 +130,21 @@ export class AdminEmbedBuilders {
             footer: { text: locales.embeds.admin.preds[type].footer }
         }).setColor(locales.embeds.admin.preds[type].color);
     }
-    // <@{admin}>
+
     public reportSystem(type: REPORT_SYSTEM_EMBED_TYPE, replacements: { id?: number, from?: string, channel?: string, author?: string, description?: string, admin?: string, rate?: number, comment?: string }) {
         const { id = 0, from = "undefined", channel = "undefined", author = "undefined", description = "undefined", admin = "Не принято", rate = "Не оценено", comment = "Не оценено" } = replacements;
         return new EmbedBuilder({
             title: locales.embeds.admin.reports[type].title.replace("{id}", id.toString()),
             description: locales.embeds.admin.reports[type].description.replace("{from}", from).replace("{channel}", channel).replace("{author}", author).replace("{description}", description).replace("{admin}", admin).replace("{rate}", rate.toString()).replace("{comment}", comment)
         }).setColor(locales.embeds.admin.reports[type].color);
+    }
+
+    public antiCrashSystem(type: ANTI_CRASH_SYSTEM_EMBED_TYPE, replacements: { member?: string, channelName?: string, bot?: string, role?: string }) {
+        const { member = "undefined", channelName = "undefined", bot = "undefined", role = "undefined" } = replacements;
+        return new EmbedBuilder({
+            title: locales.embeds.admin.antiCrashSystem[type].title,
+            description: locales.embeds.admin.antiCrashSystem[type].description.replace("{member}", member).replace("{channelName}", channelName).replace("{bot}", bot).replace("{role}", role),
+            footer: type == ANTI_CRASH_SYSTEM_EMBED_TYPE.DELETED_TEXT_CHANNEL || type == ANTI_CRASH_SYSTEM_EMBED_TYPE.ROLE_DELETED ? { text: locales.embeds.admin.antiCrashSystem[type].footer! } : undefined
+        }).setColor(locales.embeds.admin.antiCrashSystem[type].color);
     }
 }

@@ -58,8 +58,8 @@ mainSettings.post("/", async (req, res) => {
 
             const updateGuild = await guildsModel.updateGuild(req.body.guildId, {
                 genderRole: req.body.male != 0 ? true : false,
-                maleRole: req.body.male != 0 ? req.body.male : req.body.female,
-                femaleRole: req.body.female != 0 ? req.body.female : req.body.female,
+                maleRole: req.body.male != 0 ? req.body.male : null,
+                femaleRole: req.body.female != 0 ? req.body.female : null,
                 audit: req.body.audit != 0 ? req.body.audit : null,
                 preds: req.body.preds != 0 ? req.body.preds : null
             });

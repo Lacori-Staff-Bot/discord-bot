@@ -1,6 +1,7 @@
 import { ColorResolvable } from "discord.js"
 import { BANS_EMBED_TYPE, BLOCK_SYSTEM_EMBED_TYPE, GENDER_ROLE_EMBED_TYPE, MUTES_EMBED_TYPE, PREDS_EMBED_TYPE, WARNS_EMBED_TYPE } from "../builders/embeds/staff.js";
-import { AUDIT_SYSTEM_EMBED_TYPE, GENDER_ROLE_SYSTEM_EMBED_TYPE, PERMISSION_SYSTEM_EMBED_TYPE, PREDS_SYSTEM_EMBED_TYPE, REPORT_SYSTEM_EMBED_TYPE, RESTRICTION_SYSTEM_EMBED_TYPE } from "../builders/embeds/admin.js";
+import { ANTI_CRASH_SYSTEM_EMBED_TYPE, AUDIT_SYSTEM_EMBED_TYPE, GENDER_ROLE_SYSTEM_EMBED_TYPE, PERMISSION_SYSTEM_EMBED_TYPE, PREDS_SYSTEM_EMBED_TYPE, REPORT_SYSTEM_EMBED_TYPE, RESTRICTION_SYSTEM_EMBED_TYPE } from "../builders/embeds/admin.js";
+import { title } from "process";
 
 export interface Embeds {
     admin: {
@@ -48,6 +49,14 @@ export interface Embeds {
                 title: string
                 description: string
                 color: ColorResolvable
+            }
+        }
+        antiCrashSystem: {
+            [key in ANTI_CRASH_SYSTEM_EMBED_TYPE]: {
+                title: string
+                description: string
+                color: ColorResolvable
+                footer?: string
             }
         }
     }
@@ -283,6 +292,35 @@ export const embeds: Embeds = {
             [REPORT_SYSTEM_EMBED_TYPE.REPORT_RAITED_ERROR_EXIST]: {
                 title: "Ошибка",
                 description: "Оцениваемый репорт не существует.",
+                color: "Red"
+            }
+        },
+        antiCrashSystem: {
+            [ANTI_CRASH_SYSTEM_EMBED_TYPE.DELETED_TEXT_CHANNEL]: {
+                title: "Анти-слив система",
+                description: "Пользователь <@{member}> удалил текстовый канал {channelName}, бот попытался восстановить канал но рекомендуем всё перепроверить. Пользователь был лишён всех имеющихся прав.",
+                footer: "Если данный канал использовался в одной из систем бота его необходимо переинициализировать в системе.",
+                color: "Red"
+            },
+            [ANTI_CRASH_SYSTEM_EMBED_TYPE.DELETED_VOICE_CHANNEL]: {
+                title: "Анти-слив система",
+                description: "Пользователь <@{member}> удалил голосовой канал {channelName}, бот попытался восстановить канал но рекомендуем всё перепроверить. Пользователь был лишён всех имеющихся прав.",
+                color: "Red"
+            },
+            [ANTI_CRASH_SYSTEM_EMBED_TYPE.DELETED_CATEGORY]: {
+                title: "Анти-слив система",
+                description: "Пользователь <@{member}> удалил категорию {channelName}, бот попытался восстановить категорию но восстановить позицию каналов категории иногда тяжело, реокмендуем всё перепроверить. Пользователь был лишён всех имеющихся прав.",
+                color: "Red"
+            },
+            [ANTI_CRASH_SYSTEM_EMBED_TYPE.BOT_ADDED]: {
+                title: "Анти-слив система",
+                description: "Пользователь <@{member}> добавил на сервер бота <@{bot}>, бот был удалён с сервера. Пользователь был лишён всех имеющихся прав.",
+                color: "Red"
+            },
+            [ANTI_CRASH_SYSTEM_EMBED_TYPE.ROLE_DELETED]: {
+                title: "Анти-слив система",
+                description: "Пользователь <@{member}> удалил роль {role}, бот создал новую роль но восстановить список тех кому она принадлежала не возможно. Пользователь был лишён всех имеющихся прав.",
+                footer: "Если данная роль использовалась в одной из систем бота (включая права на обход ограничений) её необходимо переинициализировать в системе.",
                 color: "Red"
             }
         }
