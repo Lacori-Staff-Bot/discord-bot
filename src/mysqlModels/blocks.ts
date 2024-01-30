@@ -1,24 +1,24 @@
 import databaseController from "./main.js";
 
 interface Block {
-    id: number,
-    target: string,
-    guildId: string,
-    bans: number | null,
-    mutes: number | null,
-    warns: number | null,
-    preds: number | null,
-    status: number,
+    id: number
+    target: string
+    guildId: string
+    bans: number | null
+    mutes: number | null
+    warns: number | null
+    preds: number | null
+    status: number
     data: number
 }
 
 interface UpdateBlock {
-    target?: string,
-    guildId?: string,
-    bans?: number | null,
-    mutes?: number | null,
-    warns?: number | null,
-    preds?: number | null,
+    target?: string
+    guildId?: string
+    bans?: number | null
+    mutes?: number | null
+    warns?: number | null
+    preds?: number | null
     status?: number
     data?: number
 }

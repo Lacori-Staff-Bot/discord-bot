@@ -1,19 +1,19 @@
 import databaseController from "./main.js";
 
 interface Restriction {
-    guildId: string,
-    signalChannel: string | null,
-    maxBans: number | null,
-    maxMutes: number | null,
-    maxWarns: number | null,
+    guildId: string
+    signalChannel: string | null
+    maxBans: number | null
+    maxMutes: number | null
+    maxWarns: number | null
     maxPreds: number | null
 }
 
 interface UpdateRestriction {
-    signalChannel?: string | null,
-    maxBans?: number | null,
-    maxMutes?: number | null,
-    maxWarns?: number | null,
+    signalChannel?: string | null
+    maxBans?: number | null
+    maxMutes?: number | null
+    maxWarns?: number | null
     maxPreds?: number | null
 }
 

@@ -1,98 +1,105 @@
 import { ColorResolvable } from "discord.js"
 import { BANS_EMBED_TYPE, BLOCK_SYSTEM_EMBED_TYPE, GENDER_ROLE_EMBED_TYPE, MUTES_EMBED_TYPE, PREDS_EMBED_TYPE, WARNS_EMBED_TYPE } from "../builders/embeds/staff.js";
-import { AUDIT_SYSTEM_EMBED_TYPE, GENDER_ROLE_SYSTEM_EMBED_TYPE, PERMISSION_SYSTEM_EMBED_TYPE, PREDS_SYSTEM_EMBED_TYPE, RESTRICTION_SYSTEM_EMBED_TYPE } from "../builders/embeds/admin.js";
+import { AUDIT_SYSTEM_EMBED_TYPE, GENDER_ROLE_SYSTEM_EMBED_TYPE, PERMISSION_SYSTEM_EMBED_TYPE, PREDS_SYSTEM_EMBED_TYPE, REPORT_SYSTEM_EMBED_TYPE, RESTRICTION_SYSTEM_EMBED_TYPE } from "../builders/embeds/admin.js";
 
 export interface Embeds {
     admin: {
         audit: {
             [key in AUDIT_SYSTEM_EMBED_TYPE]: {
-                title: string,
-                description: string,
-                footer: string,
-                color: ColorResolvable
-            }
-        },
-        genderRole: {
-            [key in GENDER_ROLE_SYSTEM_EMBED_TYPE]: {
-                title: string,
-                description: string,
-                footer: string,
-                color: ColorResolvable
-            }
-        },
-        restrictions: {
-            [key in RESTRICTION_SYSTEM_EMBED_TYPE]: {
-                title: string,
-                description: string,
-                footer: string,
-                color: ColorResolvable
-            }
-        },
-        permissions: {
-            [key in PERMISSION_SYSTEM_EMBED_TYPE]: {
-                title: string,
-                description: string,
-                color: ColorResolvable
-            }
-        },
-        preds: {
-            [key in PREDS_SYSTEM_EMBED_TYPE]: {
-                title: string,
-                description: string,
-                footer: string,
+                title: string
+                description: string
+                footer: string
                 color: ColorResolvable
             }
         }
-    },
+        genderRole: {
+            [key in GENDER_ROLE_SYSTEM_EMBED_TYPE]: {
+                title: string
+                description: string
+                footer: string
+                color: ColorResolvable
+            }
+        }
+        restrictions: {
+            [key in RESTRICTION_SYSTEM_EMBED_TYPE]: {
+                title: string
+                description: string
+                footer: string
+                color: ColorResolvable
+            }
+        }
+        permissions: {
+            [key in PERMISSION_SYSTEM_EMBED_TYPE]: {
+                title: string
+                description: string
+                color: ColorResolvable
+            }
+        }
+        preds: {
+            [key in PREDS_SYSTEM_EMBED_TYPE]: {
+                title: string
+                description: string
+                footer: string
+                color: ColorResolvable
+            }
+        }
+        reports: {
+            [key in REPORT_SYSTEM_EMBED_TYPE]: {
+                title: string
+                description: string
+                color: ColorResolvable
+            }
+        }
+    }
     staff: {
         blocks: {
             [key in BLOCK_SYSTEM_EMBED_TYPE]: {
-                title: string,
-                description: string,
+                title: string
+                description: string
                 color: ColorResolvable
             }
-        },
+        }
         genderRole: {
             [GENDER_ROLE_EMBED_TYPE.GRANT_SUCCESS]: {
-                title: string,
-                description: string,
-                color: ColorResolvable,
-                male: string,
+                title: string
+                description: string
+                color: ColorResolvable
+                male: string
                 female: string
             },
             [GENDER_ROLE_EMBED_TYPE.ERROR_SYSTEM_DISABLED]: {
-                title: string,
-                description: string,
+                title: string
+                description: string
                 color: ColorResolvable
             }
-        },
+        }
         bans: {
             [key in BANS_EMBED_TYPE]: {
-                title: string,
-                description: string,
-                footer?: string,
+                title: string
+                description: string
+                footer?: string
                 color: ColorResolvable
             }
-        },
+        }
         mutes: {
             [key in MUTES_EMBED_TYPE]: {
-                title: string,
-                description: string,
+                title: string
+                description: string
                 color: ColorResolvable
             }
-        },
+        }
         warns: {
             [key in WARNS_EMBED_TYPE]: {
-                title: string,
-                description: string,
-                footer?: string,
+                title: string
+                description: string
+                footer?: string
                 color: ColorResolvable
             }
-        },
+        }
         preds: {
             [key in PREDS_EMBED_TYPE]: {
-                title: string,
-                description: string,
+                title: string
+                description: string
                 color: ColorResolvable
             }
         }
@@ -200,6 +207,83 @@ export const embeds: Embeds = {
                 description: "Канал для предупреждений сброшен.",
                 footer: "Система предупреждений отключена",
                 color: "Green"
+            }
+        },
+        reports: {
+            [REPORT_SYSTEM_EMBED_TYPE.SETUP_CHANNEL_SUCCESS]: {
+                title: "Успешно",
+                description: "Канал <#{channel}> будет принимать репорты из <#{from}>.",
+                color: "Green"
+            },
+            [REPORT_SYSTEM_EMBED_TYPE.SETUP_CHANNEL_MESSAGE]: {
+                title: "Возникла проблема?",
+                description: "В случае если у вас возникли проблемы связанные с нарушением правил сервера вы можете обратится к администрации сервера через данную форму.",
+                color: "Navy"
+            },
+            [REPORT_SYSTEM_EMBED_TYPE.SETUP_CHANNEL_ERROR_NULL_CATEGORY]: {
+                title: "Ошибка",
+                description: "Не возможно привязать категорию <#{from}>, при указании категории необходимо чтобы в ней был хотя бы один голосовой канал.",
+                color: "Red"
+            },
+            [REPORT_SYSTEM_EMBED_TYPE.REMOVE_CHANNEL_SUCCESS]: {
+                title: "Успешно",
+                description: "Канал <#{channel}> больше не будет принимать никакие репорты.",
+                color: "Green"
+            },
+            [REPORT_SYSTEM_EMBED_TYPE.CLEAR_CHANNELS_SUCCESS]: {
+                title: "Успешно",
+                description: "Система репортов полностью сброшена на сервере",
+                color: "Green"
+            },
+            [REPORT_SYSTEM_EMBED_TYPE.SENDED_SUCCESS]: {
+                title: "Успешно",
+                description: "Репорт отправлен, скоро на него ответит администрация сервера.",
+                color: "Green"
+            },
+            [REPORT_SYSTEM_EMBED_TYPE.SENDED_ERROR]: {
+                title: "Ошибка",
+                description: "Использованная вами форма более не связана ни с одним каналом для репортов, обратиться через неё к администрации невозможно.",
+                color: "Red"
+            },
+            [REPORT_SYSTEM_EMBED_TYPE.REPORT_FORM]: {
+                title: "Репрорт - #{id}",
+                description: "Автор: <@{author}>\nОписание: {description}\nКанал происшествия: <#{from}>\nОтветчик: {admin}\nОценка: {rate}\nКомментарий оценки: {comment}",
+                color: "Blurple"
+            },
+            [REPORT_SYSTEM_EMBED_TYPE.REPORT_CLAIMED_SUCCESS]: {
+                title: "Репорт принят - #{id}",
+                description: "Администратор <@{admin}> начал разбирать ваш репорт.",
+                color: "Blurple"
+            },
+            [REPORT_SYSTEM_EMBED_TYPE.REPORT_CLAIMED_ERROR_EXIST]: {
+                title: "Ошибка",
+                description: "Принимаемый репорт не существет.",
+                color: "Red"
+            },
+            [REPORT_SYSTEM_EMBED_TYPE.REPORT_CLOSED_SUCCESS]: {
+                title: "Репорт закрыт - #{id}",
+                description: "Администратор <@{admin}> отметил ваш репорт как выполненый, оцените его работу.",
+                color: "Blurple"
+            },
+            [REPORT_SYSTEM_EMBED_TYPE.REPORT_CLOSED_ERROR_ADMIN]: {
+                title: "Ошибка",
+                description: "Вы не отвечаете на данный репорт.",
+                color: "Red"
+            },
+            [REPORT_SYSTEM_EMBED_TYPE.REPORT_CLOSED_ERROR_EXIST]: {
+                title: "Ошибка",
+                description: "Закрываемый репорт не существует.",
+                color: "Red"
+            },
+            [REPORT_SYSTEM_EMBED_TYPE.REPORT_RAITED_SUCCESS]: {
+                title: "Успешно",
+                description: "Ваша оценка репорта была записана, благодарим за потраченое время.",
+                color: "Green"
+            },
+            [REPORT_SYSTEM_EMBED_TYPE.REPORT_RAITED_ERROR_EXIST]: {
+                title: "Ошибка",
+                description: "Оцениваемый репорт не существует.",
+                color: "Red"
             }
         }
     },

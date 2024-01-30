@@ -1,9 +1,9 @@
 import databaseController from "./main.js"
 
 interface AuthCookie {
-    cookie: string,
-    cookie_key: string,
-    userId: string,
+    cookie: string
+    cookie_key: string
+    userId: string
     data: number
 }
 

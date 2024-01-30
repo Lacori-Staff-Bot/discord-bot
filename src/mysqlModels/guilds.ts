@@ -1,21 +1,21 @@
 import databaseController from "./main.js";
 
 interface Guild {
-    id: string,
-    valid: boolean,
-    genderRole: boolean,
-    maleRole: string | null,
-    femaleRole: string | null,
-    audit: string | null,
+    id: string
+    valid: boolean
+    genderRole: boolean
+    maleRole: string | null
+    femaleRole: string | null
+    audit: string | null
     preds: string | null
 }
 
 interface UpdateGuild {
-    valid?: boolean,
-    genderRole?: boolean,
-    maleRole?: string | null,
-    femaleRole?: string | null,
-    audit?: string | null,
+    valid?: boolean
+    genderRole?: boolean
+    maleRole?: string | null
+    femaleRole?: string | null
+    audit?: string | null
     preds?: string | null
 }
 

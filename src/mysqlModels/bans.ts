@@ -1,12 +1,12 @@
 import databaseController from "./main.js";
 
 interface Ban {
-    id: number,
-    author: string,
-    target: string,
-    guildId: string,
-    data: number,
-    reasone: string,
+    id: number
+    author: string
+    target: string
+    guildId: string
+    data: number
+    reasone: string
     status: 0 | 1 | 2
 }
 

@@ -32,6 +32,24 @@ export const enum PREDS_SYSTEM_EMBED_TYPE {
     RESET_SUCCESS
 }
 
+export const enum REPORT_SYSTEM_EMBED_TYPE {
+    SETUP_CHANNEL_SUCCESS,
+    SETUP_CHANNEL_MESSAGE,
+    SETUP_CHANNEL_ERROR_NULL_CATEGORY,
+    REMOVE_CHANNEL_SUCCESS,
+    CLEAR_CHANNELS_SUCCESS,
+    SENDED_SUCCESS,
+    SENDED_ERROR,
+    REPORT_FORM,
+    REPORT_CLAIMED_SUCCESS,
+    REPORT_CLAIMED_ERROR_EXIST,
+    REPORT_CLOSED_SUCCESS,
+    REPORT_CLOSED_ERROR_ADMIN,
+    REPORT_CLOSED_ERROR_EXIST,
+    REPORT_RAITED_SUCCESS,
+    REPORT_RAITED_ERROR_EXIST
+}
+
 export class AdminEmbedBuilders {
     /**
      * Build audit system embed
@@ -103,5 +121,13 @@ export class AdminEmbedBuilders {
             description: locales.embeds.admin.preds[type].description.replace("{channel}", channel),
             footer: { text: locales.embeds.admin.preds[type].footer }
         }).setColor(locales.embeds.admin.preds[type].color);
+    }
+    // <@{admin}>
+    public reportSystem(type: REPORT_SYSTEM_EMBED_TYPE, replacements: { id?: number, from?: string, channel?: string, author?: string, description?: string, admin?: string, rate?: number, comment?: string }) {
+        const { id = 0, from = "undefined", channel = "undefined", author = "undefined", description = "undefined", admin = "Не принято", rate = "Не оценено", comment = "Не оценено" } = replacements;
+        return new EmbedBuilder({
+            title: locales.embeds.admin.reports[type].title.replace("{id}", id.toString()),
+            description: locales.embeds.admin.reports[type].description.replace("{from}", from).replace("{channel}", channel).replace("{author}", author).replace("{description}", description).replace("{admin}", admin).replace("{rate}", rate.toString()).replace("{comment}", comment)
+        }).setColor(locales.embeds.admin.reports[type].color);
     }
 }
