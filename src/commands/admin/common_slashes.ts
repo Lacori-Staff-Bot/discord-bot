@@ -17,7 +17,11 @@ import { Discord, SlashGroup } from "discordx";
   name: "restrict",
   description: "Система ограничений"
 })
-@SlashGroup("admin")
+@SlashGroup({
+  root: "admin",
+  name: "report",
+  description: "Система репортов"
+})
 export class Admin {
 
 }

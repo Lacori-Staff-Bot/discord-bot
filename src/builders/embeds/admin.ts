@@ -10,6 +10,7 @@ export const enum GENDER_ROLE_SYSTEM_EMBED_TYPE {
     SET_SUCCESS,
     CHANGE_SUCCESS,
     SET_ERROR_MANAGED,
+    SET_ERROR_SAME,
     RESET_SUCCESS
 }
 
@@ -30,6 +31,35 @@ export const enum PERMISSION_SYSTEM_EMBED_TYPE {
 export const enum PREDS_SYSTEM_EMBED_TYPE {
     SET_SUCCESS,
     RESET_SUCCESS
+}
+
+export const enum REPORT_SYSTEM_EMBED_TYPE {
+    SETUP_CHANNEL_SUCCESS,
+    SETUP_CHANNEL_MESSAGE,
+    SETUP_CHANNEL_ERROR_NULL_CATEGORY,
+    REMOVE_CHANNEL_SUCCESS,
+    CLEAR_CHANNELS_SUCCESS,
+    SENDED_SUCCESS,
+    SENDED_ERROR,
+    REPORT_FORM,
+    REPORT_CLAIMED_SUCCESS,
+    REPORT_CLAIMED_ERROR_EXIST,
+    REPORT_CLOSED_SUCCESS,
+    REPORT_CLOSED_ERROR_ADMIN,
+    REPORT_CLOSED_ERROR_EXIST,
+    REPORT_RAITED_SUCCESS,
+    REPORT_RAITED_ERROR_EXIST
+}
+
+export const enum ANTI_CRASH_SYSTEM_EMBED_TYPE {
+    DELETED_TEXT_CHANNEL,
+    DELETED_VOICE_CHANNEL,
+    DELETED_CATEGORY,
+    BOT_ADDED,
+    ROLE_DELETED,
+    CHANNEL_EDITED,
+    CATEGORY_EDITED,
+    GUILD_EDITED
 }
 
 export class AdminEmbedBuilders {
@@ -58,7 +88,8 @@ export class AdminEmbedBuilders {
         const { male = "undefined", female = "underfined", role = "undefined" } = replacements;
         return new EmbedBuilder({
             title: locales.embeds.admin.genderRole[type].title,
-            description: locales.embeds.admin.genderRole[type].description.replace("{male}", male).replace("{female}", female).replace("{role}", role)
+            description: locales.embeds.admin.genderRole[type].description.replace("{male}", male).replace("{female}", female).replace("{role}", role),
+            footer: { text: locales.embeds.admin.genderRole[type].footer }
         }).setColor(locales.embeds.admin.genderRole[type].color);
     }
 
@@ -103,5 +134,22 @@ export class AdminEmbedBuilders {
             description: locales.embeds.admin.preds[type].description.replace("{channel}", channel),
             footer: { text: locales.embeds.admin.preds[type].footer }
         }).setColor(locales.embeds.admin.preds[type].color);
+    }
+
+    public reportSystem(type: REPORT_SYSTEM_EMBED_TYPE, replacements: { id?: number, from?: string, channel?: string, author?: string, description?: string, admin?: string, rate?: number, comment?: string }) {
+        const { id = 0, from = "undefined", channel = "undefined", author = "undefined", description = "undefined", admin = "Не принято", rate = "Не оценено", comment = "Не оценено" } = replacements;
+        return new EmbedBuilder({
+            title: locales.embeds.admin.reports[type].title.replace("{id}", id.toString()),
+            description: locales.embeds.admin.reports[type].description.replace("{from}", from).replace("{channel}", channel).replace("{author}", author).replace("{description}", description).replace("{admin}", admin).replace("{rate}", rate.toString()).replace("{comment}", comment)
+        }).setColor(locales.embeds.admin.reports[type].color);
+    }
+
+    public antiCrashSystem(type: ANTI_CRASH_SYSTEM_EMBED_TYPE, replacements: { member?: string, channelName?: string, bot?: string, role?: string }) {
+        const { member = "undefined", channelName = "undefined", bot = "undefined", role = "undefined" } = replacements;
+        return new EmbedBuilder({
+            title: locales.embeds.admin.antiCrashSystem[type].title,
+            description: locales.embeds.admin.antiCrashSystem[type].description.replace("{member}", member).replace("{channelName}", channelName).replace("{bot}", bot).replace("{role}", role),
+            footer: type == ANTI_CRASH_SYSTEM_EMBED_TYPE.DELETED_TEXT_CHANNEL || type == ANTI_CRASH_SYSTEM_EMBED_TYPE.ROLE_DELETED ? { text: locales.embeds.admin.antiCrashSystem[type].footer! } : undefined
+        }).setColor(locales.embeds.admin.antiCrashSystem[type].color);
     }
 }

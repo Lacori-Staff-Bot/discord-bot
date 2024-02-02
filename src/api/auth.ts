@@ -2,7 +2,7 @@ import express from "express";
 import request from "request";
 import authTokensModel from "../mysqlModels/authtokens.js";
 import authCookiesModel from "../mysqlModels/authcookies.js";
-import { CLIENT_ID, CLIENT_SECRET, REDIRECT_URI } from "./common.js";
+import { CLIENT_ID, CLIENT_SECRET, FRONT_END_URL } from "./common.js";
 const auth = express.Router();
 
 interface Token {
@@ -31,12 +31,17 @@ interface User {
 }
 
 auth.post("/", async (req, res) => {
+    if (req.body.code == undefined) {
+        res.sendStatus(500);
+        return;
+    }
+
     var params = [];
     params.push("client_id=" + CLIENT_ID);
     params.push("client_secret=" + CLIENT_SECRET);
     params.push("grant_type=authorization_code");
     params.push("code=" + req.body.code);
-    params.push("redirect_uri=" + REDIRECT_URI);
+    params.push("redirect_uri=" + FRONT_END_URL);
     params.push("scope=identify");
 
     request("https://discord.com/api/oauth2/token", {

@@ -1,12 +1,12 @@
 import databaseController from "./main.js";
 
 interface Ban {
-    id: number,
-    author: string,
-    target: string,
-    guildId: string,
-    data: number,
-    reasone: string,
+    id: number
+    author: string
+    target: string
+    guildId: string
+    data: number
+    reasone: string
     status: 0 | 1 | 2
 }
 
@@ -15,15 +15,6 @@ interface UpdateBan {
 }
 
 class Bans {
-    private bans: { [id: number]: Ban } = {};
-
-    /**
-     * Clear bans cache
-     */
-    private checkCache(): void {
-        if (Object.keys(this.bans).length > 100) this.bans = {};
-    }
-
     /**
      * Create new ban record
      * @param author Author gived ban
@@ -41,16 +32,6 @@ class Bans {
                 status: false
             };
         } else {
-            this.checkCache();
-            this.bans[addBan.insertId] = {
-                id: addBan.insertId,
-                author,
-                target,
-                guildId,
-                data,
-                reasone,
-                status: 0
-            };
             return {
                 status: true,
                 id: addBan.insertId
@@ -84,10 +65,6 @@ class Bans {
      * @returns Status of exist record and record if status = true
      */
     public async getActiveBanForId(id: number) {
-        if (this.bans[id]) return {
-            status: true,
-            ban: this.bans[id]
-        };
         const getActiveBanForId = await databaseController.getRequest("SELECT * FROM `bans` WHERE id = ? AND status != 2", [id]) as Ban[];
 
         if (!getActiveBanForId.length) {
@@ -95,16 +72,6 @@ class Bans {
                 status: false
             };
         } else {
-            this.checkCache();
-            this.bans[getActiveBanForId[0].id] = {
-                id: getActiveBanForId[0].id,
-                author: getActiveBanForId[0].author,
-                target: getActiveBanForId[0].target,
-                guildId: getActiveBanForId[0].guildId,
-                data: getActiveBanForId[0].data,
-                reasone: getActiveBanForId[0].reasone,
-                status: getActiveBanForId[0].status
-            };
             return {
                 status: true,
                 ban: getActiveBanForId[0]
@@ -126,16 +93,6 @@ class Bans {
                 status: false
             };
         } else {
-            this.checkCache();
-            this.bans[getActiveBanForTarget[0].id] = {
-                id: getActiveBanForTarget[0].id,
-                author: getActiveBanForTarget[0].author,
-                target: getActiveBanForTarget[0].target,
-                guildId: getActiveBanForTarget[0].guildId,
-                data: getActiveBanForTarget[0].data,
-                reasone: getActiveBanForTarget[0].reasone,
-                status: getActiveBanForTarget[0].status
-            };
             return {
                 status: true,
                 ban: getActiveBanForTarget[0]
@@ -178,7 +135,6 @@ class Bans {
                 status: false
             };
         } else {
-            if (this.bans[id]) this.bans[id].status = 1;
             return {
                 status: true
             };
@@ -201,7 +157,6 @@ class Bans {
                 status: false
             };
         } else {
-            if (this.bans[id]) delete this.bans[id];
             return {
                 status: true
             };

@@ -1,33 +1,25 @@
 import databaseController from "./main.js";
 
 interface Guild {
-    id: string,
-    valid: boolean,
-    genderRole: boolean,
-    maleRole: string | null,
-    femaleRole: string | null,
-    audit: string | null,
+    id: string
+    valid: boolean
+    genderRole: boolean
+    maleRole: string | null
+    femaleRole: string | null
+    audit: string | null
     preds: string | null
 }
 
 interface UpdateGuild {
-    valid?: boolean,
-    genderRole?: boolean,
-    maleRole?: string | null,
-    femaleRole?: string | null,
-    audit?: string | null,
+    valid?: boolean
+    genderRole?: boolean
+    maleRole?: string | null
+    femaleRole?: string | null
+    audit?: string | null
     preds?: string | null
 }
 
 class Guilds {
-    private guilds: { [key: string]: Guild } = {};
-
-    /**
-     * Clear guilds cache
-     */
-    private checkGuilds(): void {
-        if (Object.keys(this.guilds).length > 100) this.guilds = {};
-    }
 
     /**
      * Create new guild record
@@ -42,16 +34,6 @@ class Guilds {
                 status: false
             };
         } else {
-            this.checkGuilds();
-            this.guilds[id] = {
-                id,
-                valid: true,
-                genderRole: false,
-                maleRole: null,
-                femaleRole: null,
-                audit: null,
-                preds: null
-            };
             return {
                 status: true
             };
@@ -64,10 +46,6 @@ class Guilds {
      * @returns Status of exist record and record if status = true
      */
     public async getGuild(id: string) {
-        if (this.guilds[id]) return {
-            status: true,
-            guild: this.guilds[id]
-        };
         const getGuild = await databaseController.getRequest("SELECT * FROM `guilds` WHERE id = ?", [id]) as Guild[];
 
         if (!getGuild.length) {
@@ -75,16 +53,6 @@ class Guilds {
                 status: false
             };
         } else {
-            this.checkGuilds();
-            this.guilds[id] = {
-                id,
-                valid: getGuild[0].valid,
-                genderRole: getGuild[0].genderRole,
-                maleRole: getGuild[0].maleRole,
-                femaleRole: getGuild[0].femaleRole,
-                audit: getGuild[0].audit,
-                preds: getGuild[0].preds
-            };
             return {
                 status: true,
                 guild: getGuild[0]
@@ -106,14 +74,6 @@ class Guilds {
                 status: false
             };
         } else {
-            if (this.guilds[id]) {
-                if (options.valid) this.guilds[id].valid = options.valid;
-                if (options.genderRole) this.guilds[id].genderRole = options.genderRole;
-                if (options.maleRole) this.guilds[id].maleRole = options.maleRole;
-                if (options.femaleRole) this.guilds[id].femaleRole = options.femaleRole;
-                if (options.audit) this.guilds[id].audit = options.audit;
-                if (options.preds) this.guilds[id].preds = options.preds;
-            }
             return {
                 status: true
             };
@@ -140,7 +100,6 @@ class Guilds {
                 status: false
             };
         } else {
-            if (this.guilds[id]) delete this.guilds[id];
             return {
                 status: true
             };

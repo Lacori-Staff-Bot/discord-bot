@@ -1,9 +1,9 @@
 import databaseController from "./main.js"
 
 interface AuthCookie {
-    cookie: string,
-    cookie_key: string,
-    userId: string,
+    cookie: string
+    cookie_key: string
+    userId: string
     data: number
 }
 
@@ -22,6 +22,21 @@ class AuthCookies {
         } else {
             return {
                 status: true
+            };
+        }
+    }
+
+    async getCookies() {
+        const getCookies = await databaseController.getRequest("SELECT * FROM `auth_cookies`", []) as AuthCookie[];
+
+        if (!getCookies.length) {
+            return {
+                status: false
+            };
+        } else {
+            return {
+                status: true,
+                cookies: getCookies
             };
         }
     }

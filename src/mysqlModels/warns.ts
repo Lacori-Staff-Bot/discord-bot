@@ -20,15 +20,6 @@ interface UpdateWarn {
 }
 
 class Warns {
-    private warns: { [key: number]: Warn } = {};
-
-    /**
-     * Clear warns cahce
-     */
-    private checkWarns(): void {
-        if (Object.keys(this.warns).length > 100) this.warns = {};
-    }
-
     /**
      * Create new warn record
      * @param guildId Guild were gived warn
@@ -46,16 +37,6 @@ class Warns {
                 status: false
             };
         } else {
-            this.checkWarns();
-            this.warns[addWarn.insertId] = {
-                id: addWarn.insertId,
-                guildId,
-                targetId,
-                author,
-                data,
-                reasone,
-                status: 0
-            };
             return {
                 status: true,
                 id: addWarn.insertId
@@ -108,10 +89,6 @@ class Warns {
      * @returns Status of exist record and record if status = true
      */
     public async getWarnById(id: number) {
-        if (this.warns[id]) return {
-            status: true,
-            warn: this.warns[id]
-        };
         const getWarnById = await databaseController.getRequest("SELECT * FROM `warns` WHERE id = ? AND status = 0", [id]) as Warn[];
 
         if (!getWarnById.length) {
@@ -119,16 +96,6 @@ class Warns {
                 status: false
             };
         } else {
-            this.checkWarns();
-            this.warns[id] = {
-                id,
-                guildId: getWarnById[0].guildId,
-                targetId: getWarnById[0].targetId,
-                author: getWarnById[0].author,
-                data: getWarnById[0].data,
-                reasone: getWarnById[0].reasone,
-                status: getWarnById[0].status
-            };
             return {
                 status: true,
                 warn: getWarnById[0]
@@ -150,16 +117,6 @@ class Warns {
                 status: false
             };
         } else {
-            this.checkWarns();
-            this.warns[getTargetWarns[0].id] = {
-                id: getTargetWarns[0].id,
-                guildId: getTargetWarns[0].guildId,
-                targetId: getTargetWarns[0].targetId,
-                author: getTargetWarns[0].author,
-                data: getTargetWarns[0].data,
-                reasone: getTargetWarns[0].reasone,
-                status: getTargetWarns[0].status
-            };
             return {
                 status: true,
                 warns: getTargetWarns
@@ -181,14 +138,6 @@ class Warns {
                 status: false
             };
         } else {
-            if (this.warns[id]) {
-                if (options.guildId) this.warns[id].guildId = options.guildId;
-                if (options.targetId) this.warns[id].targetId = options.targetId;
-                if (options.author) this.warns[id].author = options.author;
-                if (options.reasone) this.warns[id].reasone = options.reasone;
-                if (options.data) this.warns[id].data = options.data;
-                if (options.status) this.warns[id].status = options.status;
-            }
             return {
                 status: true
             };
@@ -208,7 +157,6 @@ class Warns {
                 status: false
             };
         } else {
-            if (this.warns[id]) delete this.warns[id];
             return {
                 status: true
             };

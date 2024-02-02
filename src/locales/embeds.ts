@@ -1,98 +1,113 @@
 import { ColorResolvable } from "discord.js"
 import { BANS_EMBED_TYPE, BLOCK_SYSTEM_EMBED_TYPE, GENDER_ROLE_EMBED_TYPE, MUTES_EMBED_TYPE, PREDS_EMBED_TYPE, WARNS_EMBED_TYPE } from "../builders/embeds/staff.js";
-import { AUDIT_SYSTEM_EMBED_TYPE, GENDER_ROLE_SYSTEM_EMBED_TYPE, PERMISSION_SYSTEM_EMBED_TYPE, PREDS_SYSTEM_EMBED_TYPE, RESTRICTION_SYSTEM_EMBED_TYPE } from "../builders/embeds/admin.js";
+import { ANTI_CRASH_SYSTEM_EMBED_TYPE, AUDIT_SYSTEM_EMBED_TYPE, GENDER_ROLE_SYSTEM_EMBED_TYPE, PERMISSION_SYSTEM_EMBED_TYPE, PREDS_SYSTEM_EMBED_TYPE, REPORT_SYSTEM_EMBED_TYPE, RESTRICTION_SYSTEM_EMBED_TYPE } from "../builders/embeds/admin.js";
 
 export interface Embeds {
     admin: {
         audit: {
             [key in AUDIT_SYSTEM_EMBED_TYPE]: {
-                title: string,
-                description: string,
-                footer: string,
-                color: ColorResolvable
-            }
-        },
-        genderRole: {
-            [key in GENDER_ROLE_SYSTEM_EMBED_TYPE]: {
-                title: string,
-                description: string,
-                footer: string,
-                color: ColorResolvable
-            }
-        },
-        restrictions: {
-            [key in RESTRICTION_SYSTEM_EMBED_TYPE]: {
-                title: string,
-                description: string,
-                footer: string,
-                color: ColorResolvable
-            }
-        },
-        permissions: {
-            [key in PERMISSION_SYSTEM_EMBED_TYPE]: {
-                title: string,
-                description: string,
-                color: ColorResolvable
-            }
-        },
-        preds: {
-            [key in PREDS_SYSTEM_EMBED_TYPE]: {
-                title: string,
-                description: string,
-                footer: string,
+                title: string
+                description: string
+                footer: string
                 color: ColorResolvable
             }
         }
-    },
+        genderRole: {
+            [key in GENDER_ROLE_SYSTEM_EMBED_TYPE]: {
+                title: string
+                description: string
+                footer: string
+                color: ColorResolvable
+            }
+        }
+        restrictions: {
+            [key in RESTRICTION_SYSTEM_EMBED_TYPE]: {
+                title: string
+                description: string
+                footer: string
+                color: ColorResolvable
+            }
+        }
+        permissions: {
+            [key in PERMISSION_SYSTEM_EMBED_TYPE]: {
+                title: string
+                description: string
+                color: ColorResolvable
+            }
+        }
+        preds: {
+            [key in PREDS_SYSTEM_EMBED_TYPE]: {
+                title: string
+                description: string
+                footer: string
+                color: ColorResolvable
+            }
+        }
+        reports: {
+            [key in REPORT_SYSTEM_EMBED_TYPE]: {
+                title: string
+                description: string
+                color: ColorResolvable
+            }
+        }
+        antiCrashSystem: {
+            [key in ANTI_CRASH_SYSTEM_EMBED_TYPE]: {
+                title: string
+                description: string
+                color: ColorResolvable
+                footer?: string
+            }
+        }
+    }
     staff: {
         blocks: {
             [key in BLOCK_SYSTEM_EMBED_TYPE]: {
-                title: string,
-                description: string,
+                title: string
+                description: string
                 color: ColorResolvable
             }
-        },
+        }
         genderRole: {
             [GENDER_ROLE_EMBED_TYPE.GRANT_SUCCESS]: {
-                title: string,
-                description: string,
-                color: ColorResolvable,
-                male: string,
+                title: string
+                description: string
+                color: ColorResolvable
+                male: string
                 female: string
             },
             [GENDER_ROLE_EMBED_TYPE.ERROR_SYSTEM_DISABLED]: {
-                title: string,
-                description: string,
+                title: string
+                description: string
                 color: ColorResolvable
             }
-        },
+        }
         bans: {
             [key in BANS_EMBED_TYPE]: {
-                title: string,
-                description: string,
-                footer?: string,
+                title: string
+                description: string
+                footer?: string
                 color: ColorResolvable
             }
-        },
+        }
         mutes: {
             [key in MUTES_EMBED_TYPE]: {
-                title: string,
-                description: string,
+                title: string
+                description: string
                 color: ColorResolvable
             }
-        },
+        }
         warns: {
             [key in WARNS_EMBED_TYPE]: {
-                title: string,
-                description: string,
-                footer?: string,
+                title: string
+                description: string
+                footer?: string
                 color: ColorResolvable
             }
-        },
+        }
         preds: {
             [key in PREDS_EMBED_TYPE]: {
-                title: string,
-                description: string,
+                title: string
+                description: string
                 color: ColorResolvable
             }
         }
@@ -132,6 +147,12 @@ export const embeds: Embeds = {
                 title: "Ошибка",
                 description: "Невозможно установить роль <@&{role}> в качестве гендр роли.\nРоль имеет больше прав чем бот.",
                 footer: "Проверьте соответствие списка ролей с вашим запросом",
+                color: "Red"
+            },
+            [GENDER_ROLE_SYSTEM_EMBED_TYPE.SET_ERROR_SAME]: {
+                title: "Ошибка",
+                description: "Указанные мужская и женская роли одинаковы.",
+                footer: "Гендр роли должны отличаться",
                 color: "Red"
             },
             [GENDER_ROLE_SYSTEM_EMBED_TYPE.RESET_SUCCESS]: {
@@ -200,6 +221,127 @@ export const embeds: Embeds = {
                 description: "Канал для предупреждений сброшен.",
                 footer: "Система предупреждений отключена",
                 color: "Green"
+            }
+        },
+        reports: {
+            [REPORT_SYSTEM_EMBED_TYPE.SETUP_CHANNEL_SUCCESS]: {
+                title: "Успешно",
+                description: "Канал <#{channel}> будет принимать репорты из <#{from}>.",
+                color: "Green"
+            },
+            [REPORT_SYSTEM_EMBED_TYPE.SETUP_CHANNEL_MESSAGE]: {
+                title: "Возникла проблема?",
+                description: "В случае если у вас возникли проблемы связанные с нарушением правил сервера вы можете обратится к администрации сервера через данную форму.",
+                color: "Navy"
+            },
+            [REPORT_SYSTEM_EMBED_TYPE.SETUP_CHANNEL_ERROR_NULL_CATEGORY]: {
+                title: "Ошибка",
+                description: "Не возможно привязать категорию <#{from}>, при указании категории необходимо чтобы в ней был хотя бы один голосовой канал.",
+                color: "Red"
+            },
+            [REPORT_SYSTEM_EMBED_TYPE.REMOVE_CHANNEL_SUCCESS]: {
+                title: "Успешно",
+                description: "Канал <#{channel}> больше не будет принимать никакие репорты.",
+                color: "Green"
+            },
+            [REPORT_SYSTEM_EMBED_TYPE.CLEAR_CHANNELS_SUCCESS]: {
+                title: "Успешно",
+                description: "Система репортов полностью сброшена на сервере",
+                color: "Green"
+            },
+            [REPORT_SYSTEM_EMBED_TYPE.SENDED_SUCCESS]: {
+                title: "Успешно",
+                description: "Репорт отправлен, скоро на него ответит администрация сервера.",
+                color: "Green"
+            },
+            [REPORT_SYSTEM_EMBED_TYPE.SENDED_ERROR]: {
+                title: "Ошибка",
+                description: "Использованная вами форма более не связана ни с одним каналом для репортов, обратиться через неё к администрации невозможно.",
+                color: "Red"
+            },
+            [REPORT_SYSTEM_EMBED_TYPE.REPORT_FORM]: {
+                title: "Репрорт - #{id}",
+                description: "Автор: <@{author}>\nОписание: {description}\nКанал происшествия: <#{from}>\nОтветчик: {admin}\nОценка: {rate}\nКомментарий оценки: {comment}",
+                color: "Blurple"
+            },
+            [REPORT_SYSTEM_EMBED_TYPE.REPORT_CLAIMED_SUCCESS]: {
+                title: "Репорт принят - #{id}",
+                description: "Администратор <@{admin}> начал разбирать ваш репорт.",
+                color: "Blurple"
+            },
+            [REPORT_SYSTEM_EMBED_TYPE.REPORT_CLAIMED_ERROR_EXIST]: {
+                title: "Ошибка",
+                description: "Принимаемый репорт не существет.",
+                color: "Red"
+            },
+            [REPORT_SYSTEM_EMBED_TYPE.REPORT_CLOSED_SUCCESS]: {
+                title: "Репорт закрыт - #{id}",
+                description: "Администратор <@{admin}> отметил ваш репорт как выполненый, оцените его работу.",
+                color: "Blurple"
+            },
+            [REPORT_SYSTEM_EMBED_TYPE.REPORT_CLOSED_ERROR_ADMIN]: {
+                title: "Ошибка",
+                description: "Вы не отвечаете на данный репорт.",
+                color: "Red"
+            },
+            [REPORT_SYSTEM_EMBED_TYPE.REPORT_CLOSED_ERROR_EXIST]: {
+                title: "Ошибка",
+                description: "Закрываемый репорт не существует.",
+                color: "Red"
+            },
+            [REPORT_SYSTEM_EMBED_TYPE.REPORT_RAITED_SUCCESS]: {
+                title: "Успешно",
+                description: "Ваша оценка репорта была записана, благодарим за потраченое время.",
+                color: "Green"
+            },
+            [REPORT_SYSTEM_EMBED_TYPE.REPORT_RAITED_ERROR_EXIST]: {
+                title: "Ошибка",
+                description: "Оцениваемый репорт не существует.",
+                color: "Red"
+            }
+        },
+        antiCrashSystem: {
+            [ANTI_CRASH_SYSTEM_EMBED_TYPE.DELETED_TEXT_CHANNEL]: {
+                title: "Анти-слив система",
+                description: "Пользователь <@{member}> удалил текстовый канал {channelName}, бот попытался восстановить канал но рекомендуем всё перепроверить. Пользователь был лишён всех имеющихся прав.",
+                footer: "Если данный канал использовался в одной из систем бота его необходимо переинициализировать в системе.",
+                color: "Red"
+            },
+            [ANTI_CRASH_SYSTEM_EMBED_TYPE.DELETED_VOICE_CHANNEL]: {
+                title: "Анти-слив система",
+                description: "Пользователь <@{member}> удалил голосовой канал {channelName}, бот попытался восстановить канал но рекомендуем всё перепроверить. Пользователь был лишён всех имеющихся прав.",
+                color: "Red"
+            },
+            [ANTI_CRASH_SYSTEM_EMBED_TYPE.DELETED_CATEGORY]: {
+                title: "Анти-слив система",
+                description: "Пользователь <@{member}> удалил категорию {channelName}, бот попытался восстановить категорию но восстановить позицию каналов категории иногда тяжело, реокмендуем всё перепроверить. Пользователь был лишён всех имеющихся прав.",
+                color: "Red"
+            },
+            [ANTI_CRASH_SYSTEM_EMBED_TYPE.BOT_ADDED]: {
+                title: "Анти-слив система",
+                description: "Пользователь <@{member}> добавил на сервер бота <@{bot}>, бот был удалён с сервера. Пользователь был лишён всех имеющихся прав.",
+                color: "Red"
+            },
+            [ANTI_CRASH_SYSTEM_EMBED_TYPE.ROLE_DELETED]: {
+                title: "Анти-слив система",
+                description: "Пользователь <@{member}> удалил роль {role}, бот создал новую роль но восстановить список тех кому она принадлежала не возможно. Пользователь был лишён всех имеющихся прав.",
+                footer: "Если данная роль использовалась в одной из систем бота (включая права на обход ограничений) её необходимо переинициализировать в системе.",
+                color: "Red"
+            },
+            [ANTI_CRASH_SYSTEM_EMBED_TYPE.CHANNEL_EDITED]: {
+                title: "Анти-слив система",
+                description: "Пользователь <@{member}> отредактировал канал {channelName}, бот попытался восстановить канал но рекомендуем всё перепроверить. Пользователь был лишён всех имеющихся прав.",
+                color: "Red"
+            },
+            [ANTI_CRASH_SYSTEM_EMBED_TYPE.CATEGORY_EDITED]: {
+                title: "Анти-слив система",
+                description: "Пользователь <@{member}> отредактировал категорию {channelName}, бот попытался восстановить категорию но рекомендуем всё перепроверить. Пользователь был лишён всех имеющихся прав.",
+                color: "Red",
+            },
+            [ANTI_CRASH_SYSTEM_EMBED_TYPE.GUILD_EDITED]: {
+                title: "Анти-слив система",
+                description: "Пользователь <@{member}> внёс изменения в настройки сервера, бот попытался отменить изменения но рекомендуем всё перепроверить. Пользователь был лишён всех имеющихся прав.",
+                color: "Red"
             }
         }
     },

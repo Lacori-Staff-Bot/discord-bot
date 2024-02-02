@@ -1,7 +1,7 @@
 import databaseController from "./main.js";
 
 interface Permission {
-    id: string,
+    id: string
     guildId: string
 }
 

@@ -46,7 +46,7 @@ export class StaffWarnsSlashes {
                     await restrictions.restrictions(RESTRICTION_TYPE.WARN, interaction, interaction.guildId!, interaction.member as GuildMember);
                     await member.send({
                         embeds: [staffBuilders.embeds.warnSystem(WARNS_EMBED_TYPE.WARN_INFO, { guildName: interaction.guild!.name, author: interaction.user.id, reasone })]
-                    });
+                    }).catch(err => console.log(err));
                 } else {
                     const addWarn = await warnsModel.addWarn(interaction.guildId!, member.id, interaction.user.id, reasone);
                     const addBan = await bansModel.addBan("0", member.id, interaction.guildId!, "Достижение лимита варнов");
@@ -64,7 +64,7 @@ export class StaffWarnsSlashes {
                             staffBuilders.embeds.warnSystem(WARNS_EMBED_TYPE.WARN_INFO, { guildName: interaction.guild!.name, author: interaction.user.id, reasone }),
                             staffBuilders.embeds.warnSystem(WARNS_EMBED_TYPE.WANR_BAN, {})
                         ]
-                    });
+                    }).catch(err => console.log(err));
                 }
             } else {
                 await interaction.reply({

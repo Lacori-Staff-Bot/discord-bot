@@ -69,6 +69,9 @@ activeBans.post("/", async (req, res) => {
             await bansModel.removeBan(req.body.id);
             if (ban.ban!.status == 1) {
                 await guild.members.unban(ban.ban!.target);
+            } else {
+                const member = await guild.members.fetch(ban.ban!.target);
+                await member.timeout(null, "unban");
             }
             const target = await bot.users.fetch(ban.ban!.target);
             if (target != null)

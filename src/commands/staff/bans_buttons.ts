@@ -48,7 +48,7 @@ export class StaffBansButtons {
 
             await target!.send({
                 embeds: [staffBuilders.embeds.banSystem(BANS_EMBED_TYPE.UNBAN_INFO, { guildName: guild!.name, author: interaction.user.id })]
-            });
+            }).catch(err => console.log(err));
             await interaction.update({
                 embeds: [staffBuilders.embeds.banSystem(BANS_EMBED_TYPE.UNBAN_SUCCESS, { target: target!.id })],
                 components: []

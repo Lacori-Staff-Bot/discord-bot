@@ -34,7 +34,7 @@ export class StaffMutesButtons {
 
         await target!.send({
             embeds: [staffBuilders.embeds.muteSystem(MUTES_EMBED_TYPE.UNMUTE_INFO, { guildName: guild!.name, author: interaction.user.id })]
-        });
+        }).catch(err => console.log(err));
 
         await interaction.update({
             embeds: [staffBuilders.embeds.muteSystem(MUTES_EMBED_TYPE.UNMUTE_SUCCESS, { target: id })],
