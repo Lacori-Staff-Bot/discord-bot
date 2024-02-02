@@ -50,7 +50,7 @@ class ReportChannels {
     }
 
     async clearChannels(guildId: string) {
-        const clearChannels = await databaseController.updateRequest("DELETE * FROM `report_channels` WHERE guildId = ?", [guildId]);
+        const clearChannels = await databaseController.updateRequest("DELETE FROM `report_channels` WHERE guildId = ?", [guildId]);
 
         if (!clearChannels.affectedRows) {
             return {

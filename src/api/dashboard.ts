@@ -23,6 +23,11 @@ interface SendingGuilds {
 }
 
 dashboard.post("/", async (req, res) => {
+    if (req.body.cookie == undefined || req.body.key == undefined) {
+        res.sendStatus(500);
+        return;
+    }
+
     const verifyCookie = await authCookiesModel.verifyCookie(req.body.cookie, req.body.key);
 
     if (!verifyCookie.status) {

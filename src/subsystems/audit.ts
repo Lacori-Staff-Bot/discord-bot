@@ -29,7 +29,7 @@ export async function audit(type: AUDIT_TYPE, interaction: CommandInteraction, r
                     await (await interaction.guild!.fetchOwner()).send({
                         embeds: [staffBuilders.embeds.banSystem(BANS_EMBED_TYPE.BAN_AUDIT, { author: interaction.user.id, target, reasone })],
                         components: [staffBuilders.buttons.unban(id)]
-                    });
+                    }).catch(err => console.log(err));
                 }
                 break;
             }
@@ -42,7 +42,7 @@ export async function audit(type: AUDIT_TYPE, interaction: CommandInteraction, r
                 } else {
                     await (await interaction.guild!.fetchOwner()).send({
                         embeds: [staffBuilders.embeds.banSystem(BANS_EMBED_TYPE.UNBAN_AUDIT, { author: interaction.user.id, target })]
-                    });
+                    }).catch(err => console.log(err));
                 }
                 break;
             }
@@ -57,7 +57,7 @@ export async function audit(type: AUDIT_TYPE, interaction: CommandInteraction, r
                     await (await interaction.guild!.fetchOwner()).send({
                         embeds: [staffBuilders.embeds.muteSystem(MUTES_EMBED_TYPE.MUTE_AUDIT, { author: interaction.user.id, target, time, reasone })],
                         components: [staffBuilders.buttons.unmute(target, interaction.guildId!)]
-                    });
+                    }).catch(err => console.log(err));
                 }
                 break;
             }
@@ -70,7 +70,7 @@ export async function audit(type: AUDIT_TYPE, interaction: CommandInteraction, r
                 } else {
                     await (await interaction.guild!.fetchOwner()).send({
                         embeds: [staffBuilders.embeds.muteSystem(MUTES_EMBED_TYPE.UNMUTE_AUDIT, { author: interaction.user.id, target })]
-                    });
+                    }).catch(err => console.log(err));
                 }
                 break;
             }
@@ -85,7 +85,7 @@ export async function audit(type: AUDIT_TYPE, interaction: CommandInteraction, r
                     await (await interaction.guild!.fetchOwner()).send({
                         embeds: [staffBuilders.embeds.warnSystem(WARNS_EMBED_TYPE.WARN_AUDIT, { author: interaction.user.id, target, reasone })],
                         components: [staffBuilders.buttons.unwarn(id, interaction.guildId!)]
-                    });
+                    }).catch(err => console.log(err));
                 }
                 break;
             }
@@ -100,7 +100,7 @@ export async function audit(type: AUDIT_TYPE, interaction: CommandInteraction, r
                     await (await interaction.guild!.fetchOwner()).send({
                         embeds: [staffBuilders.embeds.warnSystem(WARNS_EMBED_TYPE.WARN_BAN_AUDIT, { target })],
                         components: [staffBuilders.buttons.unban(id)]
-                    });
+                    }).catch(err => console.log(err));
                 }
                 break;
             }

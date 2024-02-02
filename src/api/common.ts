@@ -11,9 +11,19 @@ import activeBans from "./activeBans.js";
 import activeWarns from "./activeWarns.js";
 import activeBloks from "./activeBlocks.js";
 
-export const REDIRECT_URI = "http://localhost:3000/auth";
-export const CLIENT_ID = "1186970730412388382";
-export const CLIENT_SECRET = "IWtp5bojjBbH6RAma0mLMGMKAuCBc7DR";
+if (!process.env.FRONT_END_URL) {
+    throw Error("Could not find FRONT_END_URL in your environment");
+}
+if (!process.env.CLIENT_ID) {
+    throw Error("Could not find CLIENT_ID in your environment");
+}
+if (!process.env.CLIENT_SECRET) {
+    throw Error("Could not find CLIENT_SECRET in your environment");
+}
+
+export const FRONT_END_URL = `${process.env.FRONT_END_URL}/auth`;
+export const CLIENT_ID = process.env.CLIENT_ID;
+export const CLIENT_SECRET = process.env.CLIENT_SECRET;
 
 export const app = express();
 app.use(BodyParser.json());

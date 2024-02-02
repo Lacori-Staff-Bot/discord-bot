@@ -40,7 +40,7 @@ export class AdminReportButtons {
             const author = await bot.users.fetch(getReport.report!.author) as User;
             await author.send({
                 embeds: [adminBuilders.embeds.reportSystem(REPORT_SYSTEM_EMBED_TYPE.REPORT_CLAIMED_SUCCESS, { id, admin: interaction.user.id })]
-            });
+            }).catch(err => console.log(err));
 
             await interaction.update({
                 embeds: [adminBuilders.embeds.reportSystem(REPORT_SYSTEM_EMBED_TYPE.REPORT_FORM, {
@@ -79,7 +79,7 @@ export class AdminReportButtons {
             await author.send({
                 embeds: [adminBuilders.embeds.reportSystem(REPORT_SYSTEM_EMBED_TYPE.REPORT_CLOSED_SUCCESS, { id, admin: interaction.user.id })],
                 components: [adminBuilders.buttons.rateReport(id, `${interaction.channelId}:${interaction.message.id}`)]
-            });
+            }).catch(err => console.log(err));
 
             await interaction.update({
                 embeds: [adminBuilders.embeds.reportSystem(REPORT_SYSTEM_EMBED_TYPE.REPORT_FORM, {

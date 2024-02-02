@@ -6,6 +6,8 @@ import blocksModel from "../mysqlModels/blocks.js";
 import warnsModel from "../mysqlModels/warns.js";
 import { CLIENT_ID, CLIENT_SECRET } from "../api/common.js";
 import authCookiesModel from "../mysqlModels/authcookies.js";
+import guildsModel from "../mysqlModels/guilds.js";
+import restrictionsModel from "../mysqlModels/restrictions.js";
 
 interface Token {
     token_type: string,
@@ -65,6 +67,18 @@ async function checkAuthCookies() {
     }
 }
 
+async function checkGuilds() {
+    const guilds = await bot.guilds.fetch();
+    for (const guild of guilds) {
+        const getGuild = await guildsModel.getGuild(guild[1].id);
+
+        if (!getGuild.status) {
+            await guildsModel.addGuild(guild[1].id);
+            await restrictionsModel.addRestriction(guild[1].id);
+        }
+    }
+}
+
 async function checkBans() {
     const getActiveBans = await bansModel.getActiveBans();
 
@@ -116,4 +130,5 @@ export function enableCheckers() {
     setInterval(checkWarns, 60 * 60 * 1000);
     setInterval(checkAuthCookies, 60 * 60 * 1000);
     setInterval(renewAuthTokens, 60 * 1000);
+    checkGuilds();
 }

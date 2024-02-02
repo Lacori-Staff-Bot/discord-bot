@@ -24,15 +24,6 @@ interface UpdateBlock {
 }
 
 class Blocks {
-    private blocks: { [key: number]: Block } = {};
-
-    /**
-     * Clear blocks cache
-     */
-    private checkBlocks(): void {
-        if (Object.keys(this.blocks).length > 100) this.blocks = {};
-    }
-
     /**
      * Create new block record
      * @param target Target taked block
@@ -48,18 +39,6 @@ class Blocks {
                 status: false
             };
         } else {
-            this.checkBlocks();
-            this.blocks[addBlock.insertId] = {
-                id: addBlock.insertId,
-                target,
-                guildId,
-                bans: 0,
-                mutes: 0,
-                warns: 0,
-                preds: 0,
-                status: 0,
-                data
-            };
             return {
                 status: true,
                 id: addBlock.insertId
@@ -73,10 +52,6 @@ class Blocks {
      * @returns Status of exist record and record if status = true
      */
     public async getBlockId(id: number) {
-        if (this.blocks[id]) return {
-            status: true,
-            block: this.blocks[id]
-        };
         const getBlockId = await databaseController.getRequest("SELECT * FROM `blocks` WHERE id = ?", [id]) as Block[];
 
         if (!getBlockId.length) {
@@ -84,18 +59,6 @@ class Blocks {
                 status: false
             };
         } else {
-            this.checkBlocks();
-            this.blocks[id] = {
-                id,
-                guildId: getBlockId[0].guildId,
-                target: getBlockId[0].target,
-                bans: getBlockId[0].bans,
-                mutes: getBlockId[0].mutes,
-                warns: getBlockId[0].warns,
-                preds: getBlockId[0].preds,
-                status: getBlockId[0].status,
-                data: getBlockId[0].data
-            };
             return {
                 status: true,
                 block: getBlockId[0]
@@ -137,18 +100,6 @@ class Blocks {
                 status: false
             };
         } else {
-            this.checkBlocks();
-            this.blocks[getTreckBlock[0].id] = {
-                id: getTreckBlock[0].id,
-                guildId: getTreckBlock[0].guildId,
-                target: getTreckBlock[0].target,
-                bans: getTreckBlock[0].bans,
-                mutes: getTreckBlock[0].mutes,
-                warns: getTreckBlock[0].warns,
-                preds: getTreckBlock[0].preds,
-                status: getTreckBlock[0].status,
-                data: getTreckBlock[0].data
-            };
             return {
                 status: true,
                 block: getTreckBlock[0]
@@ -190,18 +141,6 @@ class Blocks {
                 status: false
             };
         } else {
-            this.checkBlocks();
-            this.blocks[getBlockedTarget[0].id] = {
-                id: getBlockedTarget[0].id,
-                guildId: getBlockedTarget[0].guildId,
-                target: getBlockedTarget[0].target,
-                bans: getBlockedTarget[0].bans,
-                mutes: getBlockedTarget[0].mutes,
-                warns: getBlockedTarget[0].warns,
-                preds: getBlockedTarget[0].preds,
-                status: getBlockedTarget[0].status,
-                data: getBlockedTarget[0].data
-            };
             return {
                 status: true,
                 block: getBlockedTarget[0]
@@ -223,12 +162,6 @@ class Blocks {
                 status: false
             };
         } else {
-            if (this.blocks[id]) {
-                if (options.bans) this.blocks[id].bans = options.bans;
-                if (options.mutes) this.blocks[id].mutes = options.mutes;
-                if (options.warns) this.blocks[id].warns = options.warns;
-                if (options.preds) this.blocks[id].preds = options.preds;
-            }
             return {
                 status: true
             };
@@ -251,7 +184,6 @@ class Blocks {
                 status: false
             };
         } else {
-            if (this.blocks[id]) delete this.blocks[id];
             return {
                 status: true
             };

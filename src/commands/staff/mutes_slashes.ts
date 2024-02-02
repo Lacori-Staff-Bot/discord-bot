@@ -97,7 +97,7 @@ export class StaffMutesSlahes {
                 await restrictions.restrictions(RESTRICTION_TYPE.MUTE, interaction, interaction.guildId!, interaction.member as GuildMember);
                 member.send({
                     embeds: [staffBuilders.embeds.muteSystem(MUTES_EMBED_TYPE.MUTE_INFO, { guildName: interaction.guild!.name, author: interaction.user.id, time: date, reasone })]
-                });
+                }).catch(err => console.log(err));
             } else {
                 await interaction.reply({
                     embeds: [staffBuilders.embeds.blockSystem(BLOCK_SYSTEM_EMBED_TYPE.ERROR_HAS_BLOCKED, {})],
@@ -136,7 +136,7 @@ export class StaffMutesSlahes {
                 await audit(AUDIT_TYPE.UNMUTE, interaction, { target: member.id });
                 await member.send({
                     embeds: [staffBuilders.embeds.muteSystem(MUTES_EMBED_TYPE.UNMUTE_INFO, { guildName: interaction.guild!.name, author: interaction.user.id })]
-                });
+                }).catch(err => console.log(err));
             } else {
                 await interaction.reply({
                     embeds: [staffBuilders.embeds.blockSystem(BLOCK_SYSTEM_EMBED_TYPE.ERROR_HAS_BLOCKED, {})],

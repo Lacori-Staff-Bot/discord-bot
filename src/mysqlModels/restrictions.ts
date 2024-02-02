@@ -18,15 +18,6 @@ interface UpdateRestriction {
 }
 
 class Restrictions {
-    private restrictions: { [key: string]: Restriction } = {};
-
-    /**
-     * Clear restrictions cache
-     */
-    private checkRestrictions(): void {
-        if (Object.keys(this.restrictions).length > 100) this.restrictions = {};
-    }
-
     /**
      * Create new restriction record
      * @param guildId Guild of restriction
@@ -40,15 +31,6 @@ class Restrictions {
                 status: false
             };
         } else {
-            this.checkRestrictions();
-            this.restrictions[guildId] = {
-                guildId,
-                signalChannel: null,
-                maxBans: null,
-                maxMutes: null,
-                maxWarns: null,
-                maxPreds: null
-            };
             return {
                 status: true
             };
@@ -68,15 +50,6 @@ class Restrictions {
                 status: false
             };
         } else {
-            this.checkRestrictions();
-            this.restrictions[guildId] = {
-                guildId,
-                signalChannel: getRestriction[0].signalChannel,
-                maxBans: getRestriction[0].maxBans,
-                maxMutes: getRestriction[0].maxMutes,
-                maxWarns: getRestriction[0].maxWarns,
-                maxPreds: getRestriction[0].maxPreds
-            };
             return {
                 status: true,
                 restriction: getRestriction[0]
@@ -98,13 +71,6 @@ class Restrictions {
                 status: false
             };
         } else {
-            if (this.restrictions[guildId]) {
-                if (options.signalChannel) this.restrictions[guildId].signalChannel = options.signalChannel;
-                if (options.maxBans) this.restrictions[guildId].maxBans = options.maxBans;
-                if (options.maxMutes) this.restrictions[guildId].maxMutes = options.maxMutes;
-                if (options.maxWarns) this.restrictions[guildId].maxWarns = options.maxWarns;
-                if (options.maxPreds) this.restrictions[guildId].maxPreds = options.maxPreds;
-            }
             return {
                 status: true
             };
@@ -131,7 +97,6 @@ class Restrictions {
                 status: false
             };
         } else {
-            if (this.restrictions[guildId]) delete this.restrictions[guildId];
             return {
                 status: true
             };

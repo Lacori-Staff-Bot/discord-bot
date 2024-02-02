@@ -17,15 +17,13 @@ interface UpdateReport {
 }
 
 class Reports {
-    private reports: { [key: string]: Report } = {};
-
     /**
-     * Clear reports cache
+     * Create new report record
+     * @param author Author's userId of report
+     * @param description report description
+     * @param channel channel from sended report
+     * @returns Status of creating record
      */
-    private checkReports(): void {
-        if (Object.keys(this.reports).length > 50) this.reports = {};
-    }
-
     public async addReport(author: string, description: string, channel: string) {
         const addReport = await databaseController.updateRequest("INSERT INTO `reports` (author, description, channel) VALUES (?, ?, ?)", [author, description, channel]);
 
@@ -34,16 +32,6 @@ class Reports {
                 status: false
             };
         } else {
-            this.checkReports();
-            this.reports[addReport.insertId] = {
-                id: addReport.insertId,
-                author,
-                description,
-                channel,
-                admin: null,
-                rate: null,
-                comment: null
-            };
             return {
                 status: true,
                 id: addReport.insertId
@@ -51,6 +39,11 @@ class Reports {
         }
     }
 
+    /**
+     * Find report record by id
+     * @param id Id of report record
+     * @returns Status of exist record and record if status = true
+     */
     public async getReport(id: number) {
         const getReport = await databaseController.getRequest("SELECT * FROM `reports` WHERE id = ?", [id]) as Report[];
 
@@ -59,16 +52,6 @@ class Reports {
                 status: false
             };
         } else {
-            this.checkReports();
-            this.reports[id] = {
-                id,
-                author: getReport[0].author,
-                description: getReport[0].description,
-                channel: getReport[0].channel,
-                admin: getReport[0].admin,
-                rate: getReport[0].rate,
-                comment: getReport[0].comment
-            };
             return {
                 status: true,
                 report: getReport[0]
@@ -76,6 +59,12 @@ class Reports {
         }
     }
 
+    /**
+     * Change report options in record by id
+     * @param id Id of report record
+     * @param options Updated options
+     * @returns Status of change options
+     */
     public async updateReport(id: number, options: UpdateReport) {
         const updateReport = await databaseController.updateRequest("UPDATE `reports` SET ? WHERE id = ?", [options, id]);
 
@@ -84,11 +73,6 @@ class Reports {
                 status: false
             };
         } else {
-            if (this.reports[id]) {
-                if (options.admin) this.reports[id].admin = options.admin;
-                if (options.rate) this.reports[id].rate = options.rate;
-                if (options.comment) this.reports[id].comment = options.comment;
-            }
             return {
                 status: true
             };

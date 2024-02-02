@@ -46,7 +46,7 @@ export class StaffPredsSlashes {
                     });
                     await member.send({
                         embeds: [staffBuilders.embeds.predSystem(PREDS_EMBED_TYPE.PRED_INFO, { guildName: interaction.guild!.name, author: interaction.user.id, reasone })]
-                    });
+                    }).catch(err => console.log(err));
                 } else {
                     await interaction.reply({
                         embeds: [staffBuilders.embeds.predSystem(PREDS_EMBED_TYPE.ERROR_SYSTEM_DISABLED, {})],

@@ -10,6 +10,7 @@ export const enum GENDER_ROLE_SYSTEM_EMBED_TYPE {
     SET_SUCCESS,
     CHANGE_SUCCESS,
     SET_ERROR_MANAGED,
+    SET_ERROR_SAME,
     RESET_SUCCESS
 }
 
@@ -55,7 +56,10 @@ export const enum ANTI_CRASH_SYSTEM_EMBED_TYPE {
     DELETED_VOICE_CHANNEL,
     DELETED_CATEGORY,
     BOT_ADDED,
-    ROLE_DELETED
+    ROLE_DELETED,
+    CHANNEL_EDITED,
+    CATEGORY_EDITED,
+    GUILD_EDITED
 }
 
 export class AdminEmbedBuilders {
@@ -84,7 +88,8 @@ export class AdminEmbedBuilders {
         const { male = "undefined", female = "underfined", role = "undefined" } = replacements;
         return new EmbedBuilder({
             title: locales.embeds.admin.genderRole[type].title,
-            description: locales.embeds.admin.genderRole[type].description.replace("{male}", male).replace("{female}", female).replace("{role}", role)
+            description: locales.embeds.admin.genderRole[type].description.replace("{male}", male).replace("{female}", female).replace("{role}", role),
+            footer: { text: locales.embeds.admin.genderRole[type].footer }
         }).setColor(locales.embeds.admin.genderRole[type].color);
     }
 

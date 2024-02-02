@@ -30,7 +30,7 @@ export class StaffWarnsButtons {
                 return;
             }
         }
-        if (getWarnById.warn!.status == 0) {
+        if (getWarnById.status) {
             const target = await bot.users.resolve(getWarnById.warn!.targetId);
             await warnsModel.removeWarn(parseInt(id));
 
@@ -40,7 +40,7 @@ export class StaffWarnsButtons {
             });
             await target!.send({
                 embeds: [staffBuilders.embeds.warnSystem(WARNS_EMBED_TYPE.UNWARN_INFO, { guildName: guild!.name, author: interaction.user.id })]
-            });
+            }).catch(err => console.log(err));
         } else {
             await interaction.update({
                 embeds: [staffBuilders.embeds.warnSystem(WARNS_EMBED_TYPE.UNWARN_ERROR_EXIST, {})],

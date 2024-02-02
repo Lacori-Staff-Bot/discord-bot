@@ -51,7 +51,7 @@ export class StaffBansSlashes {
                 await restrictions.restrictions(RESTRICTION_TYPE.BAN, interaction, interaction.guildId!, interaction.member as GuildMember);
                 await member.send({
                     embeds: [staffBuilders.embeds.banSystem(BANS_EMBED_TYPE.BAN_INFO, { guildName: interaction.guild!.name, author: interaction.user.id, reasone })]
-                });
+                }).catch(err => console.log(err));
             } else {
                 await interaction.reply({
                     embeds: [staffBuilders.embeds.blockSystem(BLOCK_SYSTEM_EMBED_TYPE.ERROR_HAS_BLOCKED, {})],
@@ -98,7 +98,7 @@ export class StaffBansSlashes {
                 await audit(AUDIT_TYPE.UNBAN, interaction, { target: member.id });
                 await member.send({
                     embeds: [staffBuilders.embeds.banSystem(BANS_EMBED_TYPE.UNBAN_INFO, { guildName: interaction.guild!.name, author: interaction.user.id })]
-                });
+                }).catch(err => console.log(err));
             } else {
                 await interaction.reply({
                     embeds: [staffBuilders.embeds.blockSystem(BLOCK_SYSTEM_EMBED_TYPE.ERROR_HAS_BLOCKED, {})],

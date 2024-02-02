@@ -12,7 +12,7 @@ export class Staff {
         const id = parseInt(interaction.customId.split("_")[1]);
         const getBlockId = await blocksModel.getBlockId(id);
 
-        if (!getBlockId.status) {
+        if (!getBlockId.status || getBlockId.block!.status == 2) {
             await interaction.update({
                 embeds: [staffBuilders.embeds.blockSystem(BLOCK_SYSTEM_EMBED_TYPE.ERROR_NOT_BLOCKED, {})],
                 components: []

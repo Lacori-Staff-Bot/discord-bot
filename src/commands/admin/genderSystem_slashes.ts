@@ -28,9 +28,10 @@ export class AdminGenderRoleSlashes {
         var embeds: EmbedBuilder[] = [];
         if (!male.editable) embeds.push(adminBuilders.embeds.genderRoleSystem(GENDER_ROLE_SYSTEM_EMBED_TYPE.SET_ERROR_MANAGED, { role: male.id }));
         if (!female.editable) embeds.push(adminBuilders.embeds.genderRoleSystem(GENDER_ROLE_SYSTEM_EMBED_TYPE.SET_ERROR_MANAGED, { role: female.id }));
+        if (male == female) embeds.push(adminBuilders.embeds.genderRoleSystem(GENDER_ROLE_SYSTEM_EMBED_TYPE.SET_ERROR_SAME, {}));
 
         if (embeds.length != 0) {
-            await interaction.editReply({
+            await interaction.reply({
                 embeds: embeds
             });
             return;
@@ -50,13 +51,13 @@ export class AdminGenderRoleSlashes {
 
             await guildsModel.updateGuild(interaction.guildId!, { maleRole: male.id, femaleRole: female.id });
 
-            await interaction.editReply({
+            await interaction.reply({
                 embeds: [adminBuilders.embeds.genderRoleSystem(GENDER_ROLE_SYSTEM_EMBED_TYPE.CHANGE_SUCCESS, { male: male.id, female: female.id })]
             });
         } else {
             await guildsModel.updateGuild(interaction.guildId!, { genderRole: true, maleRole: male.id, femaleRole: female.id });
 
-            await interaction.editReply({
+            await interaction.reply({
                 embeds: [adminBuilders.embeds.genderRoleSystem(GENDER_ROLE_SYSTEM_EMBED_TYPE.SET_SUCCESS, { male: male.id, female: female.id })]
             });
         }

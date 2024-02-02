@@ -1,7 +1,6 @@
 import { ColorResolvable } from "discord.js"
 import { BANS_EMBED_TYPE, BLOCK_SYSTEM_EMBED_TYPE, GENDER_ROLE_EMBED_TYPE, MUTES_EMBED_TYPE, PREDS_EMBED_TYPE, WARNS_EMBED_TYPE } from "../builders/embeds/staff.js";
 import { ANTI_CRASH_SYSTEM_EMBED_TYPE, AUDIT_SYSTEM_EMBED_TYPE, GENDER_ROLE_SYSTEM_EMBED_TYPE, PERMISSION_SYSTEM_EMBED_TYPE, PREDS_SYSTEM_EMBED_TYPE, REPORT_SYSTEM_EMBED_TYPE, RESTRICTION_SYSTEM_EMBED_TYPE } from "../builders/embeds/admin.js";
-import { title } from "process";
 
 export interface Embeds {
     admin: {
@@ -148,6 +147,12 @@ export const embeds: Embeds = {
                 title: "Ошибка",
                 description: "Невозможно установить роль <@&{role}> в качестве гендр роли.\nРоль имеет больше прав чем бот.",
                 footer: "Проверьте соответствие списка ролей с вашим запросом",
+                color: "Red"
+            },
+            [GENDER_ROLE_SYSTEM_EMBED_TYPE.SET_ERROR_SAME]: {
+                title: "Ошибка",
+                description: "Указанные мужская и женская роли одинаковы.",
+                footer: "Гендр роли должны отличаться",
                 color: "Red"
             },
             [GENDER_ROLE_SYSTEM_EMBED_TYPE.RESET_SUCCESS]: {
@@ -321,6 +326,21 @@ export const embeds: Embeds = {
                 title: "Анти-слив система",
                 description: "Пользователь <@{member}> удалил роль {role}, бот создал новую роль но восстановить список тех кому она принадлежала не возможно. Пользователь был лишён всех имеющихся прав.",
                 footer: "Если данная роль использовалась в одной из систем бота (включая права на обход ограничений) её необходимо переинициализировать в системе.",
+                color: "Red"
+            },
+            [ANTI_CRASH_SYSTEM_EMBED_TYPE.CHANNEL_EDITED]: {
+                title: "Анти-слив система",
+                description: "Пользователь <@{member}> отредактировал канал {channelName}, бот попытался восстановить канал но рекомендуем всё перепроверить. Пользователь был лишён всех имеющихся прав.",
+                color: "Red"
+            },
+            [ANTI_CRASH_SYSTEM_EMBED_TYPE.CATEGORY_EDITED]: {
+                title: "Анти-слив система",
+                description: "Пользователь <@{member}> отредактировал категорию {channelName}, бот попытался восстановить категорию но рекомендуем всё перепроверить. Пользователь был лишён всех имеющихся прав.",
+                color: "Red",
+            },
+            [ANTI_CRASH_SYSTEM_EMBED_TYPE.GUILD_EDITED]: {
+                title: "Анти-слив система",
+                description: "Пользователь <@{member}> внёс изменения в настройки сервера, бот попытался отменить изменения но рекомендуем всё перепроверить. Пользователь был лишён всех имеющихся прав.",
                 color: "Red"
             }
         }
